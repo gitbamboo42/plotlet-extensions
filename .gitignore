@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+
+# Baseline test diffs (written on mismatch)
+*.actual.svg
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
