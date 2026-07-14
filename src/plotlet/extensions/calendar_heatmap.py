@@ -15,15 +15,20 @@ from pathlib import Path
 
 import plotlet as pt
 from plotlet.draw import colormap, ContinuousNorm
+from plotlet.utils import pack_opts
 from plotlet._spec import _D
 from plotlet.draw import rect, text_path
 
 
-def calhm_record(args, kw):
-    dates = list(args[0])
-    values = list(args[1])
+def calhm_record(dates=None, values=None, vmin=None, vmax=None,
+                 cmap=None, pad=None, missing_color=None,
+                 weekday_labels=None, legend_label=None):
+    dates = list(dates)
+    values = list(values)
+    opts = pack_opts(cmap=cmap, pad=pad, missing_color=missing_color,
+                     weekday_labels=weekday_labels, legend_label=legend_label)
     if not dates:
-        return {"type": "calendar_heatmap", "weeks": 0, "_grid": [], "opts": kw}
+        return {"type": "calendar_heatmap", "weeks": 0, "_grid": [], "opts": opts}
     # Anchor at the Monday of the week containing the first date.
     d0 = min(dates)
     start = d0 - datetime.timedelta(days=d0.weekday())
@@ -38,10 +43,10 @@ def calhm_record(args, kw):
             if day in by_date:
                 grid[w][wd] = by_date[day]
     flat = [v for row in grid for v in row if v is not None]
-    vmin = kw.get("vmin", min(flat) if flat else 0.0)
-    vmax = kw.get("vmax", max(flat) if flat else 1.0)
+    vmin = vmin if vmin is not None else (min(flat) if flat else 0.0)
+    vmax = vmax if vmax is not None else (max(flat) if flat else 1.0)
     return {"type": "calendar_heatmap", "weeks": n_weeks, "_grid": grid,
-            "_start": start, "_vmin": vmin, "_vmax": vmax, "opts": kw}
+            "_start": start, "_vmin": vmin, "_vmax": vmax, "opts": opts}
 
 
 def calhm_xdomain(a):
@@ -104,6 +109,7 @@ pt.add_artist(pt.ArtistSpec(
     uses_color_cycle=False,
     legend_gradient=calhm_legend_gradient,
     tight_domain=True,
+    accepts_data_positional=False,
 ))
 
 

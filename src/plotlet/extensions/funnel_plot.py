@@ -24,33 +24,25 @@ SUMMARY = 'Meta-analysis funnel: effect vs standard error with ±1.96·SE envelo
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import text_path, segment, circle
 from ..draw import coord
 
 
 
-def funnel_plot_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "funnel_plot requires long-form input: "
-            "c.funnel_plot(data=df, est='col', se='col')."
-        )
-    data = kw.pop("data", None)
-    est_col = kw.pop("est", None)
-    se_col = kw.pop("se", None)
-    if data is None or est_col is None or se_col is None:
+def funnel_plot_record(data=None, est=None, se=None, pooled=None,
+                       color=None, size=None, z=None):
+    if data is None or est is None or se is None:
         raise TypeError("funnel_plot requires data=, est=, se=.")
-    est = to_list(data[est_col])
-    ses = to_list(data[se_col])
-    pooled = kw.get("pooled")
-    if pooled is None and est:
+    est_vals = to_list(data[est])
+    ses = to_list(data[se])
+    if pooled is None and est_vals:
         # Inverse-variance-weighted mean.
         w = [1 / (s * s) for s in ses]
-        pooled = sum(e * wi for e, wi in zip(est, w)) / sum(w)
-    return {"type": "funnel_plot", "est": est, "ses": ses, "_pooled": pooled,
-            "opts": kw}
+        pooled = sum(e * wi for e, wi in zip(est_vals, w)) / sum(w)
+    return {"type": "funnel_plot", "est": est_vals, "ses": ses,
+            "_pooled": pooled,
+            "opts": pack_opts(color=color, size=size, z=z)}
 
 
 def funnel_plot_xdomain(a):

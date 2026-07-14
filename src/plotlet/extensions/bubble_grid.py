@@ -17,18 +17,23 @@ from pathlib import Path
 
 import plotlet as pt
 from plotlet.draw import circle
-from plotlet.utils import to_list, to_list_2d
+from plotlet.utils import to_list, to_list_2d, pack_opts
 from plotlet.draw import colormap, ContinuousNorm
 from plotlet._spec import _D
 
 
-def bubble_record(args, kw):
-    x_cats = to_list(args[0])
-    y_cats = to_list(args[1])
-    size_m = to_list_2d(args[2])
-    color_m = to_list_2d(args[3]) if len(args) > 3 and args[3] is not None else size_m
+def bubble_record(x_cats=None, y_cats=None, size_matrix=None, color_matrix=None,
+                  cmap=None, smax=None, vmin=None, vmax=None,
+                  edgecolor=None, linewidth=None, fill=None):
+    x_cats = to_list(x_cats)
+    y_cats = to_list(y_cats)
+    size_m = to_list_2d(size_matrix)
+    color_m = to_list_2d(color_matrix) if color_matrix is not None else size_m
     return {"type": "bubble_grid", "x_cats": x_cats, "y_cats": y_cats,
-            "size_m": size_m, "color_m": color_m, "opts": kw}
+            "size_m": size_m, "color_m": color_m,
+            "opts": pack_opts(cmap=cmap, smax=smax, vmin=vmin, vmax=vmax,
+                              edgecolor=edgecolor, linewidth=linewidth,
+                              fill=fill)}
 
 
 def bubble_xdomain(a): return a["x_cats"]
@@ -91,6 +96,7 @@ pt.add_artist(pt.ArtistSpec(
     draw=bubble_draw,
     uses_color_cycle=False,
     legend_gradient=bubble_legend_gradient,
+    accepts_data_positional=False,
 ))
 
 

@@ -31,7 +31,7 @@ classifiers = [
     "Topic :: Multimedia :: Graphics",
 ]
 dependencies = [
-  "plotlet",
+  "plotlet>=0.6.0",
 ]
 
 [project.optional-dependencies]

@@ -14,17 +14,20 @@ SUMMARY = "Three horizontal lines (lo / mid / hi) per category — clean summary
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import segment
 
 
-def crossbar_record(args, kw):
-    cats = to_list(args[0])
-    mids = to_list(args[1])
-    lows = to_list(args[2])
-    his = to_list(args[3])
+def crossbar_record(cats=None, mids=None, lows=None, his=None,
+                    width=None, lw_mid=None, lw_outer=None, color=None):
+    cats = to_list(cats)
+    mids = to_list(mids)
+    lows = to_list(lows)
+    his = to_list(his)
     return {"type": "crossbar", "cats": cats, "mids": mids, "los": lows,
-            "his": his, "opts": kw}
+            "his": his,
+            "opts": pack_opts(width=width, lw_mid=lw_mid, lw_outer=lw_outer,
+                              color=color)}
 
 
 def crossbar_xdomain(a): return a["cats"]
@@ -63,6 +66,7 @@ pt.add_artist(pt.ArtistSpec(
     ydomain=crossbar_ydomain,
     draw=crossbar_draw,
     layer="foreground",
+    accepts_data_positional=False,
 ))
 
 

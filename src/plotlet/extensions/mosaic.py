@@ -23,7 +23,7 @@ SUMMARY = "Contingency-table proportional rectangles: row × col area = joint co
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list_2d
+from plotlet.utils import to_list_2d, pack_opts
 from plotlet.draw import rect, text_path
 
 
@@ -33,12 +33,14 @@ _PALETTE = [
 ]
 
 
-def mosaic_record(args, kw):
-    table = to_list_2d(args[0])
-    row_names = list(args[1])
-    col_names = list(args[2])
+def mosaic_record(table=None, row_names=None, col_names=None,
+                  color_by=None, pad=None):
+    table = to_list_2d(table)
+    row_names = list(row_names)
+    col_names = list(col_names)
     return {"type": "mosaic", "table": table,
-            "row_names": row_names, "col_names": col_names, "opts": kw}
+            "row_names": row_names, "col_names": col_names,
+            "opts": pack_opts(color_by=color_by, pad=pad)}
 
 
 def mosaic_xdomain(a): return [0, 1]
@@ -116,6 +118,7 @@ pt.add_artist(pt.ArtistSpec(
     uses_color_cycle=False,
     tight_domain=True,
     legend_entries=mosaic_legend_entries,
+    accepts_data_positional=False,
 ))
 
 

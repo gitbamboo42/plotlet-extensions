@@ -20,22 +20,17 @@ SUMMARY = 'Vertical or horizontal tick marks per row, for spike rasters / event 
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import segment
 
 
-def eventplot_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "eventplot requires long-form input: "
-            "c.eventplot(data=df, x='position_col', at=row_y)."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    if data is None or x_col is None:
+def eventplot_record(data=None, x=None, orientation=None, at=None,
+                     length=None, linewidth=None, label=None, color=None):
+    if data is None or x is None:
         raise TypeError("eventplot requires data=, x= (positions column).")
-    return {"type": "eventplot", "pos": to_list(data[x_col]), "opts": kw}
+    return {"type": "eventplot", "pos": to_list(data[x]),
+            "opts": pack_opts(orientation=orientation, at=at, length=length,
+                              linewidth=linewidth, label=label, color=color)}
 
 
 def eventplot_xdomain(a):

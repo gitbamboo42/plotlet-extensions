@@ -18,29 +18,22 @@ SUMMARY = 'Precision-recall curve with trapezoidal AUPR; the imbalanced-classes 
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import polyline, segment
 
 
-def pr_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "pr requires long-form input: "
-            "c.pr(data=df, true='col', score='col')."
-        )
-    data = kw.pop("data", None)
-    true_col = kw.pop("true", None)
-    score_col = kw.pop("score", None)
-    if data is None or true_col is None or score_col is None:
+def pr_record(data=None, true=None, score=None, label=None,
+              linewidth=None, prevalence=None, _first=None):
+    if data is None or true is None or score is None:
         raise TypeError("pr requires data=, true=, score=.")
-    y_true = to_list(data[true_col])
-    y_score = to_list(data[score_col])
+    y_true = to_list(data[true])
+    y_score = to_list(data[score])
     paired = sorted(zip(y_score, y_true), key=lambda p: -p[0])
     n_pos = sum(1 for _, t in paired if t == 1)
     if n_pos == 0:
         return {"type": "pr", "_rec": [0, 1], "_prec": [0, 0], "_aupr": 0,
-                "opts": kw}
+                "opts": pack_opts(label=label, linewidth=linewidth,
+                                  prevalence=prevalence, _first=_first)}
     tp = 0; fp = 0
     rec = []; prec = []
     prev_score = None
@@ -59,12 +52,13 @@ def pr_record(args, kw):
     aupr = 0.0
     for i in range(1, len(rec)):
         aupr += (rec[i] - rec[i - 1]) * (prec[i] + prec[i - 1]) / 2
-    kw = dict(kw)
-    if kw.get("label"):
-        kw["label"] = f"{kw['label']} (AUPR = {aupr:.3f})"
+    if label:
+        label = f"{label} (AUPR = {aupr:.3f})"
     else:
-        kw["label"] = f"AUPR = {aupr:.3f}"
-    return {"type": "pr", "_rec": rec, "_prec": prec, "_aupr": aupr, "opts": kw}
+        label = f"AUPR = {aupr:.3f}"
+    return {"type": "pr", "_rec": rec, "_prec": prec, "_aupr": aupr,
+            "opts": pack_opts(label=label, linewidth=linewidth,
+                              prevalence=prevalence, _first=_first)}
 
 
 def pr_xdomain(a): return [0, 1]

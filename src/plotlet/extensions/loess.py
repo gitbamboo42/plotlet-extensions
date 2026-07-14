@@ -21,26 +21,21 @@ from pathlib import Path
 
 import plotlet as pt
 from plotlet.draw import polyline, segment
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 
 
-def loess_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "loess requires long-form input: "
-            "c.loess(data=df, x='col', y='col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    if data is None or x_col is None or y_col is None:
+def loess_record(data=None, x=None, y=None, frac=None, span=None, it=None,
+                 linewidth=None, label=None):
+    if data is None or x is None or y is None:
         raise TypeError("loess requires data=, x=, y=.")
-    xs = to_list(data[x_col]); ys = to_list(data[y_col])
-    frac = kw.get("frac", kw.get("span", 0.5))
-    it = kw.get("it", 3)
+    xs = to_list(data[x]); ys = to_list(data[y])
+    if frac is None:
+        frac = span if span is not None else 0.5
+    if it is None:
+        it = 3
+    opts = pack_opts(linewidth=linewidth, label=label)
     if not xs:
-        return {"type": "loess", "_grid": [], "_fit": [], "opts": kw}
+        return {"type": "loess", "_grid": [], "_fit": [], "opts": opts}
     try:
         from statsmodels.nonparametric.smoothers_lowess import lowess
     except ImportError as e:
@@ -51,7 +46,7 @@ def loess_record(args, kw):
     smoothed = lowess(ys, xs, frac=frac, it=it, return_sorted=True)
     grid = smoothed[:, 0].tolist()
     fit = smoothed[:, 1].tolist()
-    return {"type": "loess", "_grid": grid, "_fit": fit, "opts": kw}
+    return {"type": "loess", "_grid": grid, "_fit": fit, "opts": opts}
 
 
 def loess_xdomain(a): return a["_grid"]

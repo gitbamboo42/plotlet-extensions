@@ -11,24 +11,16 @@ from pathlib import Path
 
 import plotlet as pt
 from plotlet.draw import rect
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet._spec import _D
 
 
-def barh_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "barh requires long-form input: "
-            "c.barh(data=df, x='value_col', y='category_col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    if data is None or x_col is None or y_col is None:
+def barh_record(data=None, x=None, y=None, width=None, alpha=None, label=None):
+    if data is None or x is None or y is None:
         raise TypeError("barh requires data=, x= (values), y= (categories).")
-    return {"type": "barh", "cats": to_list(data[y_col]),
-            "vals": to_list(data[x_col]), "opts": kw}
+    return {"type": "barh", "cats": to_list(data[y]),
+            "vals": to_list(data[x]),
+            "opts": pack_opts(width=width, alpha=alpha, label=label)}
 
 
 def barh_xdomain(a): return list(a["vals"]) + [0]

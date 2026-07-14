@@ -25,17 +25,19 @@ from pathlib import Path
 import numpy as np
 
 import plotlet as pt
-from plotlet.utils import to_list_2d
+from plotlet.utils import to_list_2d, pack_opts
 from plotlet.draw import text_path
 from ..draw import coord
 
 
 
 # Local label artist so the biplot is self-contained.
-def _bplabel_record(args, kw):
+def _bplabel_record(xs=None, ys=None, labels=None,
+                    color=None, fontsize=None, dx=None, dy=None):
     return {"type": "biplot_label",
-            "xs": list(args[0]), "ys": list(args[1]),
-            "labels": list(args[2]), "opts": kw}
+            "xs": list(xs), "ys": list(ys),
+            "labels": list(labels),
+            "opts": pack_opts(color=color, fontsize=fontsize, dx=dx, dy=dy)}
 
 
 def _bplabel_draw(a, ctx):
@@ -55,6 +57,7 @@ pt.add_artist(pt.ArtistSpec(
     xdomain=lambda a: a["xs"], ydomain=lambda a: a["ys"],
     draw=_bplabel_draw,
     uses_color_cycle=False, layer="foreground",
+    accepts_data_positional=False,
 ))
 
 

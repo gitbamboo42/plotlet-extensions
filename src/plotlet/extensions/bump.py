@@ -19,7 +19,7 @@ from pathlib import Path
 
 import plotlet as pt
 from plotlet.draw import circle, polyline
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 
 
 def _ranks_descending(values):
@@ -31,22 +31,13 @@ def _ranks_descending(values):
     return ranks
 
 
-def bump_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "bump requires long-form input: "
-            "c.bump(data=df, x='period_col', y='value_col', group='series_col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    group_col = kw.pop("group", None)
-    if data is None or x_col is None or y_col is None or group_col is None:
+def bump_record(data=None, x=None, y=None, group=None,
+                linewidth=None, size=None, color=None, label=None):
+    if data is None or x is None or y is None or group is None:
         raise TypeError("bump requires data=, x=, y=, group=.")
-    xs_all = to_list(data[x_col])
-    ys_all = to_list(data[y_col])
-    gs_all = to_list(data[group_col])
+    xs_all = to_list(data[x])
+    ys_all = to_list(data[y])
+    gs_all = to_list(data[group])
 
     periods: list = []
     for p in xs_all:
@@ -69,14 +60,15 @@ def bump_record(args, kw):
     for p in periods:
         ranks_at[p] = _ranks_descending(by_period[p])
 
-    kw.pop("label", None)  # auto-labels per series; ignore call-level label
+    # auto-labels per series; ignore call-level `label`
     records = []
     for s_name in series_list:
         i = series_idx[s_name]
         trace = [ranks_at[p][i] for p in periods]
         records.append({"type": "bump", "periods": periods, "ranks": trace,
                         "n_series": n_series,
-                        "opts": dict(kw, label=str(s_name))})
+                        "opts": pack_opts(linewidth=linewidth, size=size,
+                                          color=color, label=str(s_name))})
     return records
 
 

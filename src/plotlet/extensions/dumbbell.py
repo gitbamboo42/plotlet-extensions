@@ -24,27 +24,22 @@ SUMMARY = 'Categorical before/after: two dots connected by a line per row, color
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import segment, circle
 
 
-def dumbbell_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "dumbbell requires long-form input: "
-            "c.dumbbell(data=df, y='category_col', a='col', b='col')."
-        )
-    data = kw.pop("data", None)
-    y_col = kw.pop("y", None)
-    a_col = kw.pop("a", None)
-    b_col = kw.pop("b", None)
-    if data is None or y_col is None or a_col is None or b_col is None:
+def dumbbell_record(data=None, y=None, a=None, b=None, a_color=None,
+                    b_color=None, up_color=None, down_color=None,
+                    size=None, linewidth=None):
+    if data is None or y is None or a is None or b is None:
         raise TypeError("dumbbell requires data=, y=, a=, b=.")
-    labels = to_list(data[y_col])
-    a = to_list(data[a_col])
-    b = to_list(data[b_col])
-    return {"type": "dumbbell", "labels": labels, "a": a, "b": b, "opts": kw}
+    labels = to_list(data[y])
+    a_vals = to_list(data[a])
+    b_vals = to_list(data[b])
+    return {"type": "dumbbell", "labels": labels, "a": a_vals, "b": b_vals,
+            "opts": pack_opts(a_color=a_color, b_color=b_color,
+                              up_color=up_color, down_color=down_color,
+                              size=size, linewidth=linewidth)}
 
 
 def dumbbell_xdomain(a): return list(a["a"]) + list(a["b"])

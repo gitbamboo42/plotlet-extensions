@@ -19,28 +19,26 @@ import math
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import text_path, circle, segment
 
 
-def volcano_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "volcano requires long-form input: "
-            "c.volcano(data=df, x='log2fc_col', y='pvalue_col', label='gene_col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    label_col = kw.pop("label", None)
-    if data is None or x_col is None or y_col is None:
+def volcano_record(data=None, x=None, y=None, label=None,
+                   fc_threshold=None, p_threshold=None,
+                   up_color=None, down_color=None, ns_color=None,
+                   up_label=None, down_label=None, ns_label=None,
+                   size=None, n_label=None):
+    if data is None or x is None or y is None:
         raise TypeError("volcano requires data=, x= (log2fc), y= (pvalue).")
-    fc = to_list(data[x_col])
-    pvals = to_list(data[y_col])
-    labels = to_list(data[label_col]) if label_col is not None else [""] * len(fc)
+    fc = to_list(data[x])
+    pvals = to_list(data[y])
+    labels = to_list(data[label]) if label is not None else [""] * len(fc)
     return {"type": "volcano", "fc": fc, "pvals": pvals, "labels": labels,
-            "opts": kw}
+            "opts": pack_opts(
+                fc_threshold=fc_threshold, p_threshold=p_threshold,
+                up_color=up_color, down_color=down_color, ns_color=ns_color,
+                up_label=up_label, down_label=down_label, ns_label=ns_label,
+                size=size, n_label=n_label)}
 
 
 def volcano_xdomain(a): return a["fc"]

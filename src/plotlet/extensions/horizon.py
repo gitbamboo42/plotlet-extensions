@@ -17,7 +17,7 @@ from pathlib import Path
 
 import plotlet as pt
 from plotlet.draw import polygon as draw_polygon
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 
 
 def _hex_to_rgb(h):
@@ -35,22 +35,17 @@ def _mix(rgb, white, t):
     return f"rgb({r},{g},{b})"
 
 
-def horizon_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "horizon requires long-form input: "
-            "c.horizon(data=df, x='col', y='col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    if data is None or x_col is None or y_col is None:
+def horizon_record(data=None, x=None, y=None, bands=None, base=None,
+                   pos_color=None, neg_color=None,
+                   pos_label=None, neg_label=None):
+    if data is None or x is None or y is None:
         raise TypeError("horizon requires data=, x=, y=.")
     return {"type": "horizon",
-            "xs": to_list(data[x_col]),
-            "ys": to_list(data[y_col]),
-            "opts": kw}
+            "xs": to_list(data[x]),
+            "ys": to_list(data[y]),
+            "opts": pack_opts(bands=bands, base=base,
+                              pos_color=pos_color, neg_color=neg_color,
+                              pos_label=pos_label, neg_label=neg_label)}
 
 
 def horizon_xdomain(a): return a["xs"]

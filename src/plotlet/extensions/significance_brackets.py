@@ -28,32 +28,25 @@ SUMMARY = "Significance brackets over a boxplot/violin: '*'/'**'/'ns' annotation
 from pathlib import Path
 
 import plotlet as pt
+from plotlet.utils import pack_opts
 from plotlet.draw import path, text_path
 from ..draw import coord
 
 
 
-def sig_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "significance_brackets requires long-form input: "
-            "c.significance_brackets(data=df, a='col', b='col', label='col')."
-        )
-    data = kw.pop("data", None)
-    a_col = kw.pop("a", None)
-    b_col = kw.pop("b", None)
-    label_col = kw.pop("label", None)
-    if data is None or a_col is None or b_col is None or label_col is None:
+def sig_record(data=None, a=None, b=None, label=None,
+               y_top=None, y_step=None, offset=None):
+    if data is None or a is None or b is None or label is None:
         raise TypeError(
             "significance_brackets requires data=, a=, b=, label=."
         )
-    a_vals = list(data[a_col])
-    b_vals = list(data[b_col])
-    labels = list(data[label_col])
+    a_vals = list(data[a])
+    b_vals = list(data[b])
+    labels = list(data[label])
     comparisons = list(zip(a_vals, b_vals, labels))
     return {"type": "significance_brackets",
-            "comparisons": comparisons, "opts": kw}
+            "comparisons": comparisons,
+            "opts": pack_opts(y_top=y_top, y_step=y_step, offset=offset)}
 
 
 def sig_xdomain(a):

@@ -29,7 +29,7 @@ from pathlib import Path
 from scipy.stats import gaussian_kde
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts, UNSET
 from plotlet.draw import path, segment, rect, circle
 from ..draw import coord
 
@@ -39,22 +39,14 @@ def _quantile(xs, q):
     return float(np.quantile(np.asarray(xs, dtype=float), q))
 
 
-def split_violin_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "split_violin requires long-form input: "
-            "c.split_violin(data=df, x='cat_col', y='value_col', split='group_col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    split_col = kw.pop("split", None)
-    if data is None or x_col is None or y_col is None or split_col is None:
+def split_violin_record(data=None, x=None, y=None, split=None,
+                        color=None, width=None, inner=UNSET, n_grid=None,
+                        alpha=None, label=None, labels=None):
+    if data is None or x is None or y is None or split is None:
         raise TypeError("split_violin requires data=, x=, y=, split=.")
-    xs = to_list(data[x_col])
-    ys = to_list(data[y_col])
-    splits = to_list(data[split_col])
+    xs = to_list(data[x])
+    ys = to_list(data[y])
+    splits = to_list(data[split])
     cats: list = []
     for c in xs:
         if c not in cats:
@@ -66,20 +58,27 @@ def split_violin_record(args, kw):
     if len(split_levels) != 2:
         raise ValueError(
             f"split_violin expects exactly 2 levels in split column "
-            f"{split_col!r}, got {len(split_levels)}: {split_levels}"
+            f"{split!r}, got {len(split_levels)}: {split_levels}"
         )
     a = [[] for _ in cats]
     b = [[] for _ in cats]
     cat_idx = {c: i for i, c in enumerate(cats)}
-    for x, y, s in zip(xs, ys, splits):
-        i = cat_idx[x]
+    for xv, yv, s in zip(xs, ys, splits):
+        i = cat_idx[xv]
         if s == split_levels[0]:
-            a[i].append(y)
+            a[i].append(yv)
         else:
-            b[i].append(y)
-    if "labels" not in kw:
-        kw["labels"] = (str(split_levels[0]), str(split_levels[1]))
-    return {"type": "split_violin", "cats": cats, "a": a, "b": b, "opts": kw}
+            b[i].append(yv)
+    if labels is None:
+        labels = (str(split_levels[0]), str(split_levels[1]))
+    opts = pack_opts(color=color, width=width, n_grid=n_grid, alpha=alpha,
+                     label=label, labels=labels)
+    # inner carries None as a real value ("no inner box"); keep the key iff
+    # the caller set it so the draw side sees exactly what was passed.
+    if inner is not UNSET:
+        opts["inner"] = inner
+    return {"type": "split_violin", "cats": cats, "a": a, "b": b,
+            "opts": opts}
 
 
 def split_violin_xdomain(a): return a["cats"]

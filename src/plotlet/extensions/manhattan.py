@@ -20,26 +20,17 @@ import math
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import text_path, circle, segment
 
 
-def manhattan_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "manhattan requires long-form input: "
-            "c.manhattan(data=df, chrom='col', pos='col', pvalue='col')."
-        )
-    data = kw.pop("data", None)
-    chrom_col = kw.pop("chrom", None)
-    pos_col = kw.pop("pos", None)
-    pvalue_col = kw.pop("pvalue", None)
-    if data is None or chrom_col is None or pos_col is None or pvalue_col is None:
+def manhattan_record(data=None, chrom=None, pos=None, pvalue=None,
+                     colors=None, sig=None, suggestive=None, size=None):
+    if data is None or chrom is None or pos is None or pvalue is None:
         raise TypeError("manhattan requires data=, chrom=, pos=, pvalue=.")
-    chroms = to_list(data[chrom_col])
-    pos = to_list(data[pos_col])
-    pvals = to_list(data[pvalue_col])
+    chroms = to_list(data[chrom])
+    pos = to_list(data[pos])
+    pvals = to_list(data[pvalue])
     # Group by chrom keeping order of first appearance.
     seen = []
     by_chrom = {}
@@ -63,7 +54,9 @@ def manhattan_record(args, kw):
             chrom_idx.append(i)
     return {"type": "manhattan", "_xs": xs_cum, "_ys": ys_log,
             "_chrom_idx": chrom_idx, "_seen": seen, "_centers": centers,
-            "_total": cum, "opts": kw}
+            "_total": cum,
+            "opts": pack_opts(colors=colors, sig=sig,
+                              suggestive=suggestive, size=size)}
 
 
 def manhattan_xdomain(a):

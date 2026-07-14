@@ -20,36 +20,26 @@ import math
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import text_path, segment, rect, errorbar_h, polygon
 
 
-def forest_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "forest requires long-form input: "
-            "c.forest(data=df, label='col', est='col', lo='col', hi='col')."
-        )
-    data = kw.pop("data", None)
-    label_col = kw.pop("label", None)
-    est_col = kw.pop("est", None)
-    lo_col = kw.pop("lo", None)
-    hi_col = kw.pop("hi", None)
-    if (data is None or label_col is None or est_col is None
-            or lo_col is None or hi_col is None):
+def forest_record(data=None, label=None, est=None, lo=None, hi=None,
+                  weights=None, ref=None, pooled=None, color=None):
+    if (data is None or label is None or est is None
+            or lo is None or hi is None):
         raise TypeError("forest requires data=, label=, est=, lo=, hi=.")
-    weights_col = kw.pop("weights", None)
-    if isinstance(weights_col, str):
-        kw["weights"] = to_list(data[weights_col])
-    elif weights_col is not None:
-        kw["weights"] = list(weights_col)
+    if isinstance(weights, str):
+        weights = to_list(data[weights])
+    elif weights is not None:
+        weights = list(weights)
     return {"type": "forest",
-            "labels": to_list(data[label_col]),
-            "est": to_list(data[est_col]),
-            "lo": to_list(data[lo_col]),
-            "hi": to_list(data[hi_col]),
-            "opts": kw}
+            "labels": to_list(data[label]),
+            "est": to_list(data[est]),
+            "lo": to_list(data[lo]),
+            "hi": to_list(data[hi]),
+            "opts": pack_opts(weights=weights, ref=ref, pooled=pooled,
+                              color=color)}
 
 
 def forest_xdomain(a):

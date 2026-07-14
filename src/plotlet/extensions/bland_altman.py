@@ -13,24 +13,15 @@ import math
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import circle, segment, text_path
 
 
-def ba_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "bland_altman requires long-form input: "
-            "c.bland_altman(data=df, a='col', b='col')."
-        )
-    data = kw.pop("data", None)
-    a_col = kw.pop("a", None)
-    b_col = kw.pop("b", None)
-    if data is None or a_col is None or b_col is None:
+def ba_record(data=None, a=None, b=None, size=None, color=None):
+    if data is None or a is None or b is None:
         raise TypeError("bland_altman requires data=, a=, b=.")
-    a = to_list(data[a_col])
-    b = to_list(data[b_col])
+    a = to_list(data[a])
+    b = to_list(data[b])
     means = [(x + y) / 2 for x, y in zip(a, b)]
     diffs = [(x - y) for x, y in zip(a, b)]
     n = len(diffs)
@@ -40,7 +31,8 @@ def ba_record(args, kw):
         bias = sum(diffs) / n
         sd = math.sqrt(sum((d - bias) ** 2 for d in diffs) / max(n - 1, 1))
     return {"type": "bland_altman", "means": means, "diffs": diffs,
-            "_bias": bias, "_sd": sd, "opts": kw}
+            "_bias": bias, "_sd": sd,
+            "opts": pack_opts(size=size, color=color)}
 
 
 def ba_xdomain(a): return a["means"]

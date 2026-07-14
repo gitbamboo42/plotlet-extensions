@@ -10,6 +10,9 @@ dist/
 # Baseline test diffs (written on mismatch)
 *.actual.svg
 
+# Generated gallery images (rebuild with `python gallery/_gallery.py`)
+gallery/*.svg
+
 # Editors / OS
 .vscode/
 .idea/

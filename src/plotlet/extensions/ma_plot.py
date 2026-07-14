@@ -21,28 +21,22 @@ import math
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import circle, segment
 
 
-def ma_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "ma requires long-form input: "
-            "c.ma(data=df, x='mean_expr_col', y='log2fc_col', padj='col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    if data is None or x_col is None or y_col is None:
+def ma_record(data=None, x=None, y=None, padj=None,
+              fc_threshold=None, padj_threshold=None,
+              sig_color=None, ns_color=None, size=None):
+    if data is None or x is None or y is None:
         raise TypeError("ma requires data=, x= (mean expression), y= (log2 fold change).")
-    mean_expr = to_list(data[x_col])
-    log2_fc = to_list(data[y_col])
-    padj_col = kw.pop("padj", None)
-    padj = to_list(data[padj_col]) if padj_col is not None else None
-    return {"type": "ma", "_a": mean_expr, "_m": log2_fc, "_padj": padj,
-            "opts": kw}
+    mean_expr = to_list(data[x])
+    log2_fc = to_list(data[y])
+    padj_vals = to_list(data[padj]) if padj is not None else None
+    return {"type": "ma", "_a": mean_expr, "_m": log2_fc, "_padj": padj_vals,
+            "opts": pack_opts(
+                fc_threshold=fc_threshold, padj_threshold=padj_threshold,
+                sig_color=sig_color, ns_color=ns_color, size=size)}
 
 
 def ma_xdomain(a): return a["_a"]

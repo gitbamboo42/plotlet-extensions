@@ -17,17 +17,17 @@ SUMMARY = "Classifier evaluation heatmap: counts (or row-normalized rates) of tr
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts, UNSET
 from plotlet.draw import colormap, ContinuousNorm
 from plotlet.draw import rect, text_path
 from ..draw import coord
 
 
 
-def cm_record(args, kw):
-    y_true = to_list(args[0])
-    y_pred = to_list(args[1])
-    classes = kw.get("classes")
+def cm_record(y_true=None, y_pred=None, classes=None, normalize=UNSET,
+              cmap=None, vmax=None, show_counts=None):
+    y_true = to_list(y_true)
+    y_pred = to_list(y_pred)
     if classes is None:
         classes = sorted(set(y_true) | set(y_pred))
     idx = {c: i for i, c in enumerate(classes)}
@@ -35,20 +35,25 @@ def cm_record(args, kw):
     counts = [[0] * n for _ in range(n)]
     for t, p in zip(y_true, y_pred):
         counts[idx[t]][idx[p]] += 1
-    normalize = kw.get("normalize", "row")
-    if normalize == "row":
+    norm_mode = "row" if normalize is UNSET else normalize
+    if norm_mode == "row":
         mat = [[(c / sum(row)) if sum(row) else 0 for c in row] for row in counts]
-    elif normalize == "col":
+    elif norm_mode == "col":
         col_tot = [sum(counts[r][c] for r in range(n)) for c in range(n)]
         mat = [[counts[r][c] / col_tot[c] if col_tot[c] else 0
                 for c in range(n)] for r in range(n)]
-    elif normalize == "all":
+    elif norm_mode == "all":
         tot = sum(sum(row) for row in counts) or 1
         mat = [[c / tot for c in row] for row in counts]
     else:
         mat = [list(row) for row in counts]
+    opts = pack_opts(cmap=cmap, vmax=vmax, show_counts=show_counts)
+    # normalize carries None as a real value ("raw counts"); keep the key iff
+    # the caller set it so the draw side sees exactly what was passed.
+    if normalize is not UNSET:
+        opts["normalize"] = normalize
     return {"type": "confusion_matrix", "_counts": counts, "_mat": mat,
-            "_classes": classes, "opts": kw}
+            "_classes": classes, "opts": opts}
 
 
 def cm_xdomain(a): return a["_classes"]
@@ -109,6 +114,7 @@ pt.add_artist(pt.ArtistSpec(
     draw=cm_draw,
     uses_color_cycle=False,
     legend_gradient=cm_legend_gradient,
+    accepts_data_positional=False,
 ))
 
 

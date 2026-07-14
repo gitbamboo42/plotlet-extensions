@@ -19,31 +19,26 @@ SUMMARY = "Reliability diagram: predicted vs observed probability in bins; diago
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import segment, polyline, circle
 
 
-def calibration_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "calibration requires long-form input: "
-            "c.calibration(data=df, true='col', score='col')."
-        )
-    data = kw.pop("data", None)
-    true_col = kw.pop("true", None)
-    score_col = kw.pop("score", None)
-    if data is None or true_col is None or score_col is None:
+def calibration_record(data=None, true=None, score=None, n_bins=None,
+                       strategy=None, linewidth=None, color=None, label=None,
+                       _first=None):
+    if data is None or true is None or score is None:
         raise TypeError("calibration requires data=, true=, score=.")
-    y_true = to_list(data[true_col])
-    y_score = to_list(data[score_col])
-    n_bins = kw.get("n_bins", 10)
-    strategy = kw.get("strategy", "quantile")
+    y_true = to_list(data[true])
+    y_score = to_list(data[score])
+    n_bins = 10 if n_bins is None else n_bins
+    strategy = "quantile" if strategy is None else strategy
+    opts = pack_opts(linewidth=linewidth, color=color, label=label,
+                     _first=_first)
     paired = sorted(zip(y_score, y_true), key=lambda p: p[0])
     n = len(paired)
     if n == 0:
         return {"type": "calibration", "_pred": [], "_obs": [], "_count": [],
-                "opts": kw}
+                "opts": opts}
     bins = []
     if strategy == "quantile":
         # Split into n_bins by sample-count quantile.
@@ -66,7 +61,7 @@ def calibration_record(args, kw):
         obs.append(sum(ts) / len(ts))
         cnt.append(len(chunk))
     return {"type": "calibration", "_pred": pred, "_obs": obs, "_count": cnt,
-            "opts": kw}
+            "opts": opts}
 
 
 def calibration_xdomain(a): return [0, 1]

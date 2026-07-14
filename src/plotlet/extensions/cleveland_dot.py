@@ -18,26 +18,19 @@ SUMMARY = "Horizontal dot at each category — Cleveland's perception-tested alt
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import segment, circle
 
 
-def cdot_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "cleveland_dot requires long-form input: "
-            "c.cleveland_dot(data=df, x='value_col', y='category_col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    if data is None or x_col is None or y_col is None:
+def cdot_record(data=None, x=None, y=None, size=None, line=None,
+                line_color=None, color=None, label=None):
+    if data is None or x is None or y is None:
         raise TypeError("cleveland_dot requires data=, x=, y=.")
     return {"type": "cleveland_dot",
-            "labels": to_list(data[y_col]),
-            "values": to_list(data[x_col]),
-            "opts": kw}
+            "labels": to_list(data[y]),
+            "values": to_list(data[x]),
+            "opts": pack_opts(size=size, line=line, line_color=line_color,
+                              color=color, label=label)}
 
 
 def cdot_xdomain(a):

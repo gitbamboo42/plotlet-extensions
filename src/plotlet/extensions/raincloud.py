@@ -52,7 +52,7 @@ from pathlib import Path
 import plotlet as pt
 from plotlet.utils import (to_list, quantile, resolve_aes, palette_color,
                             dodge_positions, categorical_groups,
-                            silverman_bw, kde_1d)
+                            silverman_bw, kde_1d, pack_opts)
 from plotlet.draw import TAB10, resolve_color
 from plotlet.draw import path, rect, segment, circle
 from plotlet._spec import _FRAME
@@ -75,8 +75,7 @@ def _jitter_hash(*ints):
     return ((z & 0xFFFFFFFF) / 0xFFFFFFFF) - 0.5
 
 
-def _resolve_fill_kwarg(data, kw):
-    fill = kw.pop("fill", None)
+def _resolve_fill(data, fill):
     if fill is None:
         return None, None
     kind, value = resolve_aes(data, fill)
@@ -85,26 +84,27 @@ def _resolve_fill_kwarg(data, kw):
     return value, None
 
 
-def raincloud_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "raincloud requires long-form input: "
-            "c.raincloud(data=df, x='cat_col', y='value_col')."
-        )
-    data = kw.pop("data", None)
-    x = kw.pop("x", None)
-    y = kw.pop("y", None)
+def raincloud_record(data=None, x=None, y=None, fill=None,
+                     color=None, palette=None, orientation=None,
+                     width=None, gap=None, n_grid=None, bw_adjust=None,
+                     trim=None, fill_alpha=None, box_alpha=None,
+                     linewidth=None, median_linewidth=None, whis=None,
+                     size=None, dot_alpha=None, jitter=None):
     if data is None or x is None or y is None:
         raise TypeError(
             "raincloud requires data=, x=, y= (fill= optional)."
         )
-    fill_literal, group_col = _resolve_fill_kwarg(data, kw)
+    fill_literal, group_col = _resolve_fill(data, fill)
     cats, groups, vals = categorical_groups(data, x, y, group_col)
-    if fill_literal is not None:
-        kw["_fill_literal"] = fill_literal
     return {"type": "raincloud", "cats": cats, "groups": groups,
-            "vals": vals, "opts": kw}
+            "vals": vals,
+            "opts": pack_opts(
+                color=color, palette=palette, orientation=orientation,
+                width=width, gap=gap, n_grid=n_grid, bw_adjust=bw_adjust,
+                trim=trim, fill_alpha=fill_alpha, box_alpha=box_alpha,
+                linewidth=linewidth, median_linewidth=median_linewidth,
+                whis=whis, size=size, dot_alpha=dot_alpha, jitter=jitter,
+                _fill_literal=fill_literal)}
 
 
 def _rc_horizontal(a): return a["opts"].get("orientation") == "h"

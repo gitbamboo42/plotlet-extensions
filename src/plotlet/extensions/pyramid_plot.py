@@ -23,28 +23,23 @@ SUMMARY = 'Population pyramid: paired horizontal bars mirrored around x = 0 (lef
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import rect, text_path
 
 
-def pyramid_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "pyramid requires long-form input: "
-            "c.pyramid(data=df, y='cat_col', left='col', right='col')."
-        )
-    data = kw.pop("data", None)
-    y_col = kw.pop("y", None)
-    left_col = kw.pop("left", None)
-    right_col = kw.pop("right", None)
-    if data is None or y_col is None or left_col is None or right_col is None:
+def pyramid_record(data=None, y=None, left=None, right=None,
+                   left_color=None, right_color=None,
+                   left_label=None, right_label=None, height=None):
+    if data is None or y is None or left is None or right is None:
         raise TypeError("pyramid requires data=, y=, left=, right=.")
-    labels = to_list(data[y_col])
-    left = to_list(data[left_col])
-    right = to_list(data[right_col])
-    return {"type": "pyramid", "labels": labels, "left": left, "right": right,
-            "opts": kw}
+    labels = to_list(data[y])
+    left_vals = to_list(data[left])
+    right_vals = to_list(data[right])
+    return {"type": "pyramid", "labels": labels,
+            "left": left_vals, "right": right_vals,
+            "opts": pack_opts(left_color=left_color, right_color=right_color,
+                              left_label=left_label, right_label=right_label,
+                              height=height)}
 
 
 def pyramid_xdomain(a):

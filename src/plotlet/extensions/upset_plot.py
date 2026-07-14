@@ -25,11 +25,14 @@ from pathlib import Path
 
 import plotlet as pt
 from plotlet.draw import text_path, rect, segment, circle
+from plotlet.utils import pack_opts
 
 
-def upset_record(args, kw):
-    names = list(args[0])
-    sets = {n: set(args[1][n]) for n in names}
+def upset_record(names=None, sets=None, n_top=None,
+                 bar_width=None, color=None, on_color=None, off_color=None,
+                 on_label=None, off_label=None):
+    names = list(names)
+    sets = {n: set(sets[n]) for n in names}
     universe = set().union(*sets.values()) if sets else set()
     # Compute intersection sizes: for every non-empty subset of names.
     intersections = []
@@ -42,11 +45,12 @@ def upset_record(args, kw):
             if members:
                 intersections.append((set(combo), len(members)))
     intersections.sort(key=lambda x: -x[1])
-    n_top = kw.get("n_top")
     if n_top:
         intersections = intersections[:n_top]
     return {"type": "upset", "_names": names, "_inter": intersections,
-            "opts": kw}
+            "opts": pack_opts(bar_width=bar_width, color=color,
+                              on_color=on_color, off_color=off_color,
+                              on_label=on_label, off_label=off_label)}
 
 
 def upset_xdomain(a):
@@ -149,6 +153,7 @@ pt.add_artist(pt.ArtistSpec(
     uses_color_cycle=False,
     legend_entries=upset_legend_entries,
     frame_defaults=upset_frame_defaults,
+    accepts_data_positional=False,
 ))
 
 

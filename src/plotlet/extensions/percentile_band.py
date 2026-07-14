@@ -23,7 +23,7 @@ SUMMARY = "Median line plus filled percentile ribbon for repeated-measure data."
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list, quantile
+from plotlet.utils import to_list, quantile, pack_opts
 from plotlet.draw import polygon, polyline, rect, segment
 
 
@@ -35,32 +35,25 @@ def _percentiles_from_grid(samples, qs):
     return med, lo, hi
 
 
-def pband_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "percentile_band requires long-form input: "
-            "c.percentile_band(data=df, x='x_col', y='value_col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    if data is None or x_col is None or y_col is None:
+def pband_record(data=None, x=None, y=None, qs=None,
+                 alpha=None, linewidth=None, label=None):
+    if data is None or x is None or y is None:
         raise TypeError("percentile_band requires data=, x=, y=.")
-    xs_all = to_list(data[x_col])
-    ys_all = to_list(data[y_col])
+    xs_all = to_list(data[x])
+    ys_all = to_list(data[y])
     # Discover x positions in first-appearance order and bucket samples.
     xs: list = []
     by_x: dict = {}
-    for x, y in zip(xs_all, ys_all):
-        if x not in by_x:
-            xs.append(x); by_x[x] = []
-        by_x[x].append(y)
-    samples = [by_x[x] for x in xs]
-    qs = kw.get("qs", (0.25, 0.75))
+    for xv, yv in zip(xs_all, ys_all):
+        if xv not in by_x:
+            xs.append(xv); by_x[xv] = []
+        by_x[xv].append(yv)
+    samples = [by_x[xv] for xv in xs]
+    qs = qs if qs is not None else (0.25, 0.75)
     med, lo, hi = _percentiles_from_grid(samples, qs)
     return {"type": "percentile_band", "xs": xs, "_med": med,
-            "_lo": lo, "_hi": hi, "opts": kw}
+            "_lo": lo, "_hi": hi,
+            "opts": pack_opts(alpha=alpha, linewidth=linewidth, label=label)}
 
 
 def pband_xdomain(a): return a["xs"]

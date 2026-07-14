@@ -17,31 +17,23 @@ SUMMARY = 'ROC curve with trapezoidal AUC computed inline and appended to the le
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import polyline, segment
 
 
-def roc_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "roc requires long-form input: "
-            "c.roc(data=df, true='col', score='col')."
-        )
-    data = kw.pop("data", None)
-    true_col = kw.pop("true", None)
-    score_col = kw.pop("score", None)
-    if data is None or true_col is None or score_col is None:
+def roc_record(data=None, true=None, score=None, label=None,
+               linewidth=None, _first=None):
+    if data is None or true is None or score is None:
         raise TypeError("roc requires data=, true=, score=.")
-    y_true = to_list(data[true_col])
-    y_score = to_list(data[score_col])
+    y_true = to_list(data[true])
+    y_score = to_list(data[score])
     # Sort by score descending, sweep threshold from high to low.
     paired = sorted(zip(y_score, y_true), key=lambda p: -p[0])
     n_pos = sum(1 for _, t in paired if t == 1)
     n_neg = len(paired) - n_pos
     if n_pos == 0 or n_neg == 0:
         return {"type": "roc", "_fpr": [0, 1], "_tpr": [0, 1], "_auc": 0.5,
-                "opts": kw}
+                "opts": pack_opts(label=label, linewidth=linewidth, _first=_first)}
     tps = 0; fps = 0
     fpr = [0.0]; tpr = [0.0]
     prev_score = None
@@ -57,12 +49,12 @@ def roc_record(args, kw):
     for i in range(1, len(fpr)):
         auc += (fpr[i] - fpr[i - 1]) * (tpr[i] + tpr[i - 1]) / 2
     # Augment label with AUC if user gave one.
-    kw = dict(kw)
-    if kw.get("label"):
-        kw["label"] = f"{kw['label']} (AUC = {auc:.3f})"
+    if label:
+        label = f"{label} (AUC = {auc:.3f})"
     else:
-        kw["label"] = f"AUC = {auc:.3f}"
-    return {"type": "roc", "_fpr": fpr, "_tpr": tpr, "_auc": auc, "opts": kw}
+        label = f"AUC = {auc:.3f}"
+    return {"type": "roc", "_fpr": fpr, "_tpr": tpr, "_auc": auc,
+            "opts": pack_opts(label=label, linewidth=linewidth, _first=_first)}
 
 
 def roc_xdomain(a): return [0, 1]

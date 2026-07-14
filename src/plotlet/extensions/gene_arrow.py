@@ -21,33 +21,25 @@ SUMMARY = 'Directional rectangles with arrowheads, per strand — for genomics t
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import path, text_path
 from ..draw import coord
 
 
 
-def gene_arrow_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "gene_arrow requires long-form input: "
-            "c.gene_arrow(data=df, start='col', end='col', strand='col')."
-        )
-    data = kw.pop("data", None)
-    start_col = kw.pop("start", None)
-    end_col = kw.pop("end", None)
-    strand_col = kw.pop("strand", None)
-    if data is None or start_col is None or end_col is None or strand_col is None:
+def gene_arrow_record(data=None, start=None, end=None, strand=None,
+                      label=None, at=None, height=None, head_frac=None):
+    if data is None or start is None or end is None or strand is None:
         raise TypeError("gene_arrow requires data=, start=, end=, strand=.")
-    label_col = kw.pop("label", None)
-    if label_col is not None:
-        kw["labels"] = [str(v) for v in to_list(data[label_col])]
+    labels = None
+    if label is not None:
+        labels = [str(v) for v in to_list(data[label])]
     return {"type": "gene_arrow",
-            "starts": to_list(data[start_col]),
-            "ends": to_list(data[end_col]),
-            "strands": to_list(data[strand_col]),
-            "opts": kw}
+            "starts": to_list(data[start]),
+            "ends": to_list(data[end]),
+            "strands": to_list(data[strand]),
+            "opts": pack_opts(labels=labels, at=at, height=height,
+                              head_frac=head_frac)}
 
 
 def gene_arrow_xdomain(a):

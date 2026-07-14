@@ -23,30 +23,21 @@ SUMMARY = "Multivariate EDA: vertical axes per variable, one polyline per row, n
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import polyline, segment, text_path
 
 
-def parallel_coords_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "parallel_coords requires long-form input: "
-            "c.parallel_coords(data=df, vars=['col1','col2',...], group='col')."
-        )
-    data = kw.pop("data", None)
-    var_names = kw.pop("vars", None)
-    if data is None or not var_names:
+def parallel_coords_record(data=None, vars=None, group=None,
+                           alpha=None, linewidth=None):
+    if data is None or not vars:
         raise TypeError("parallel_coords requires data=, vars=[...].")
-    var_names = list(var_names)
+    var_names = list(vars)
     cols = [to_list(data[v]) for v in var_names]
     n_rows = len(cols[0]) if cols else 0
     rows = [[cols[c][r] for c in range(len(var_names))] for r in range(n_rows)]
-    group_col = kw.pop("group", None)
-    if group_col is not None:
-        kw["group"] = to_list(data[group_col])
+    group_vals = to_list(data[group]) if group is not None else None
     return {"type": "parallel_coords", "rows": rows, "var_names": var_names,
-            "opts": kw}
+            "opts": pack_opts(group=group_vals, alpha=alpha, linewidth=linewidth)}
 
 
 def parallel_coords_xdomain(a):

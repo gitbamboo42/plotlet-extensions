@@ -20,25 +20,20 @@ from pathlib import Path
 
 import plotlet as pt
 from plotlet.draw import rect, segment
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 
 
-def diverging_bar_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "diverging_bar requires long-form input: "
-            "c.diverging_bar(data=df, x='value_col', y='category_col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    if data is None or x_col is None or y_col is None:
+def diverging_bar_record(data=None, x=None, y=None, pos_color=None,
+                         neg_color=None, height=None, pos_label=None,
+                         neg_label=None):
+    if data is None or x is None or y is None:
         raise TypeError("diverging_bar requires data=, x= (values), y= (categories).")
     return {"type": "diverging_bar",
-            "labels": to_list(data[y_col]),
-            "values": to_list(data[x_col]),
-            "opts": kw}
+            "labels": to_list(data[y]),
+            "values": to_list(data[x]),
+            "opts": pack_opts(pos_color=pos_color, neg_color=neg_color,
+                              height=height, pos_label=pos_label,
+                              neg_label=neg_label)}
 
 
 def diverging_bar_xdomain(a):

@@ -23,7 +23,7 @@ import math
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import polygon, polyline, segment
 from scipy.stats import chi2, norm
 from ..draw import coord
@@ -58,23 +58,16 @@ def _km_path(times, events):
     return step_t, step_s, step_var, censored
 
 
-def km_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "km requires long-form input: "
-            "c.km(data=df, time='col', event='col')."
-        )
-    data = kw.pop("data", None)
-    time_col = kw.pop("time", None)
-    event_col = kw.pop("event", None)
-    if data is None or time_col is None or event_col is None:
+def km_record(data=None, time=None, event=None,
+              ci=None, level=None, linewidth=None, label=None):
+    if data is None or time is None or event is None:
         raise TypeError("km requires data=, time=, event=.")
-    times = to_list(data[time_col])
-    events = to_list(data[event_col])
+    times = to_list(data[time])
+    events = to_list(data[event])
     t, s, var, cens = _km_path(times, events)
     return {"type": "km", "_t": t, "_s": s, "_var": var, "_cens": cens,
-            "opts": kw}
+            "opts": pack_opts(ci=ci, level=level, linewidth=linewidth,
+                              label=label)}
 
 
 def km_xdomain(a): return a["_t"]

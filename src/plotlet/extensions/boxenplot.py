@@ -43,7 +43,7 @@ import plotlet as pt
 from plotlet.draw import rect, segment
 from plotlet.draw import TAB10, resolve_color
 from plotlet.utils import (to_list, quantile, resolve_aes, palette_color,
-                            dodge_positions, categorical_groups)
+                            dodge_positions, categorical_groups, pack_opts)
 from plotlet._spec import _FRAME
 
 
@@ -61,8 +61,7 @@ def _mix_to_white(hex_col, t):
     return f"rgb({r},{g},{b})"
 
 
-def _resolve_fill_kwarg(data, kw):
-    fill = kw.pop("fill", True)
+def _resolve_fill_kwarg(data, fill):
     if fill is False or fill is None:
         return False, None, None
     if fill is True:
@@ -73,27 +72,25 @@ def _resolve_fill_kwarg(data, kw):
     return True, value, None
 
 
-def boxen_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "boxen requires long-form input: "
-            "c.boxen(data=df, x='cat_col', y='value_col')."
-        )
-    data = kw.pop("data", None)
-    x = kw.pop("x", None)
-    y = kw.pop("y", None)
+def boxen_record(data=None, x=None, y=None, fill=True,
+                 palette=None, width=None, gap=None, max_levels=None,
+                 linewidth=None, median_linewidth=None, color=None,
+                 orientation=None):
     if data is None or x is None or y is None:
         raise TypeError(
             "boxen requires data=, x=, y= (fill= optional)."
         )
-    do_fill, fill_literal, group_col = _resolve_fill_kwarg(data, kw)
+    do_fill, fill_literal, group_col = _resolve_fill_kwarg(data, fill)
     cats, groups, vals = categorical_groups(data, x, y, group_col)
-    kw["_do_fill"] = do_fill
+    opts = pack_opts(palette=palette, width=width, gap=gap,
+                     max_levels=max_levels, linewidth=linewidth,
+                     median_linewidth=median_linewidth, color=color,
+                     orientation=orientation)
+    opts["_do_fill"] = do_fill
     if fill_literal is not None:
-        kw["_fill_literal"] = fill_literal
+        opts["_fill_literal"] = fill_literal
     return {"type": "boxen", "cats": cats, "groups": groups,
-            "vals": vals, "opts": kw}
+            "vals": vals, "opts": opts}
 
 
 def _boxen_horizontal(a): return a["opts"].get("orientation") == "h"

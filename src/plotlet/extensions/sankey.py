@@ -32,6 +32,7 @@ from pathlib import Path
 
 import plotlet as pt
 from plotlet.draw import path, rect, text_path
+from plotlet.utils import pack_opts
 from ..draw import coord
 
 
@@ -63,16 +64,21 @@ def _layer_assignment(n_nodes, edges):
     return layer
 
 
-def sankey_record(args, kw):
-    nodes = list(args[0])
-    flows_in = list(args[1])
+def sankey_record(nodes=None, flows_in=None,
+                  node_pad=None, node_w=None, ribbon_alpha=None,
+                  node_colors=None):
+    nodes = list(nodes)
+    flows_in = list(flows_in)
     idx = {n: i for i, n in enumerate(nodes)}
     flows = []
     for s, t, v in flows_in:
         si = idx[s] if isinstance(s, str) else s
         ti = idx[t] if isinstance(t, str) else t
         flows.append((si, ti, float(v)))
-    return {"type": "sankey", "_nodes": nodes, "_flows": flows, "opts": kw}
+    return {"type": "sankey", "_nodes": nodes, "_flows": flows,
+            "opts": pack_opts(node_pad=node_pad, node_w=node_w,
+                              ribbon_alpha=ribbon_alpha,
+                              node_colors=node_colors)}
 
 
 def sankey_xdomain(a): return [0, 1]
@@ -210,6 +216,7 @@ pt.add_artist(pt.ArtistSpec(
     uses_color_cycle=False,
     tight_domain=True,
     legend_entries=sankey_legend_entries,
+    accepts_data_positional=False,
 ))
 
 

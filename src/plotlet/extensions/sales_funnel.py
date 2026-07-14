@@ -17,26 +17,20 @@ SUMMARY = 'Conversion funnel: centered horizontal bars narrowing top-to-bottom w
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import rect, text_path
 
 
-def sales_funnel_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "sales_funnel requires long-form input: "
-            "c.sales_funnel(data=df, label='col', value='col')."
-        )
-    data = kw.pop("data", None)
-    label_col = kw.pop("label", None)
-    value_col = kw.pop("value", None)
-    if data is None or label_col is None or value_col is None:
+def sales_funnel_record(data=None, label=None, value=None,
+                        color=None, height=None,
+                        show_values=None, show_pct=None):
+    if data is None or label is None or value is None:
         raise TypeError("sales_funnel requires data=, label=, value=.")
     return {"type": "sales_funnel",
-            "labels": to_list(data[label_col]),
-            "values": to_list(data[value_col]),
-            "opts": kw}
+            "labels": to_list(data[label]),
+            "values": to_list(data[value]),
+            "opts": pack_opts(color=color, height=height,
+                              show_values=show_values, show_pct=show_pct)}
 
 
 def sales_funnel_xdomain(a): return [-1, 1]

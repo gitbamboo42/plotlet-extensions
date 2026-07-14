@@ -15,28 +15,21 @@ SUMMARY = "Data-anchored text via plotlet's bundled DejaVu Sans, on the foregrou
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import text_path
 
 
-def text_label_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "text_label requires long-form input: "
-            "c.text_label(data=df, x='col', y='col', label='col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    label_col = kw.pop("label", None)
-    if data is None or x_col is None or y_col is None or label_col is None:
+def text_label_record(data=None, x=None, y=None, label=None,
+                      fontsize=None, anchor=None, dx=None, dy=None,
+                      color=None):
+    if data is None or x is None or y is None or label is None:
         raise TypeError("text_label requires data=, x=, y=, label=.")
     return {"type": "text_label",
-            "xs": to_list(data[x_col]),
-            "ys": to_list(data[y_col]),
-            "labels": [str(v) for v in to_list(data[label_col])],
-            "opts": kw}
+            "xs": to_list(data[x]),
+            "ys": to_list(data[y]),
+            "labels": [str(v) for v in to_list(data[label])],
+            "opts": pack_opts(fontsize=fontsize, anchor=anchor,
+                              dx=dx, dy=dy, color=color)}
 
 
 def text_label_xdomain(a): return a["xs"]

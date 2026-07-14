@@ -14,25 +14,23 @@ SUMMARY = 'Successive ± contributions to a running total, with dashed connector
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import text_path, rect, segment
 
 
-def waterfall_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "waterfall requires long-form input: "
-            "c.waterfall(data=df, label='col', delta='col')."
-        )
-    data = kw.pop("data", None)
-    label_col = kw.pop("label", None)
-    delta_col = kw.pop("delta", None)
-    if data is None or label_col is None or delta_col is None:
+def waterfall_record(data=None, label=None, delta=None,
+                     pos_color=None, neg_color=None, total_color=None,
+                     pos_label=None, neg_label=None, total_label=None,
+                     show_total=None, show_values=None, width=None):
+    if data is None or label is None or delta is None:
         raise TypeError("waterfall requires data=, label=, delta=.")
-    labels = to_list(data[label_col])
-    deltas = to_list(data[delta_col])
-    return {"type": "waterfall", "labels": labels, "deltas": deltas, "opts": kw}
+    labels = to_list(data[label])
+    deltas = to_list(data[delta])
+    return {"type": "waterfall", "labels": labels, "deltas": deltas,
+            "opts": pack_opts(
+                pos_color=pos_color, neg_color=neg_color, total_color=total_color,
+                pos_label=pos_label, neg_label=neg_label, total_label=total_label,
+                show_total=show_total, show_values=show_values, width=width)}
 
 
 def waterfall_xdomain(a):

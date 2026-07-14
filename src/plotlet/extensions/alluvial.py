@@ -23,6 +23,7 @@ from pathlib import Path
 
 import plotlet as pt
 from plotlet.draw import path, rect, text_path
+from plotlet.utils import pack_opts
 from ..draw import coord
 
 
@@ -33,11 +34,13 @@ _PALETTE = [
 ]
 
 
-def alluvial_record(args, kw):
-    layers = [(str(name), list(cats)) for name, cats in args[0]]
-    transitions = {tuple(k): dict(v) for k, v in dict(args[1]).items()}
+def alluvial_record(layers=None, transitions=None,
+                    node_w=None, node_pad=None, ribbon_alpha=None):
+    layers = [(str(name), list(cats)) for name, cats in layers]
+    transitions = {tuple(k): dict(v) for k, v in dict(transitions).items()}
     return {"type": "alluvial", "layers": layers, "trans": transitions,
-            "opts": kw}
+            "opts": pack_opts(node_w=node_w, node_pad=node_pad,
+                              ribbon_alpha=ribbon_alpha)}
 
 
 def alluvial_xdomain(a): return [0, 1]
@@ -171,6 +174,7 @@ pt.add_artist(pt.ArtistSpec(
     uses_color_cycle=False,
     tight_domain=True,
     legend_entries=alluvial_legend_entries,
+    accepts_data_positional=False,
 ))
 
 

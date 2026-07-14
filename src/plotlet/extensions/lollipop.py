@@ -14,28 +14,20 @@ SUMMARY = 'Stem-and-circle chart for sparse comparisons; optional mini-lollipop 
 from pathlib import Path
 
 import plotlet as pt
-from plotlet.utils import to_list
+from plotlet.utils import to_list, pack_opts
 from plotlet.draw import segment, circle
 
 
 # 1. record(): turn args/kwargs into the artist dict stored in Chart._calls.
-def lollipop_record(args, kw):
-    kw = dict(kw)
-    if args:
-        raise TypeError(
-            "lollipop requires long-form input: "
-            "c.lollipop(data=df, x='col', y='col')."
-        )
-    data = kw.pop("data", None)
-    x_col = kw.pop("x", None)
-    y_col = kw.pop("y", None)
-    if data is None or x_col is None or y_col is None:
+def lollipop_record(data=None, x=None, y=None,
+                    size=None, linewidth=None, label=None):
+    if data is None or x is None or y is None:
         raise TypeError("lollipop requires data=, x=, y=.")
     return {
         "type": "lollipop",
-        "xs": to_list(data[x_col]),
-        "ys": to_list(data[y_col]),
-        "opts": kw,
+        "xs": to_list(data[x]),
+        "ys": to_list(data[y]),
+        "opts": pack_opts(size=size, linewidth=linewidth, label=label),
     }
 
 
@@ -97,7 +89,7 @@ def demo():
     c.lollipop(a, x="x", y="y", label="A")
     c.lollipop(b, x="x", y="y", label="B", size=4)
     c.title("Lollipop chart").xlabel("position").ylabel("score")
-    c.grid(True).legend(True)
+    c.gridlines(True).legend(True)
     return c
 
 
