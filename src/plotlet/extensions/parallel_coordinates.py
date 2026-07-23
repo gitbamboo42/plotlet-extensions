@@ -8,8 +8,8 @@ different scales coexist.
 Used everywhere EDA touches more than three numeric columns.
 
 API:
-    c.parallel_coords(data=df, vars=["col1", "col2", ...],
-                       group="category_col", alpha=0.6)
+    c = pt.chart(df, aes(group="category_col"))
+    c.add_parallel_coords(vars=["col1", "col2", ...], alpha=0.6)
 
 `vars=`  -> ordered list of column names; each becomes one vertical axis.
 `group=` -> optional column of per-row category. Each unique value
@@ -120,8 +120,9 @@ def demo():
                 "class": cls,
             })
     df = {k: [r[k] for r in rows] for k in rows[0]}
-    c = pt.chart(data_width=520, data_height=260)
-    c.parallel_coords(df, vars=var_names, group="class")
+
+    c = pt.chart(df, pt.aes(group="class"), data_width=520, data_height=260)
+    c.add_parallel_coords(vars=var_names)
     c.xticks([]); c.yticks([])  # labels are drawn inside the artist
     c.title("Parallel coordinates")
     return c

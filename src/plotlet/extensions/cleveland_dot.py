@@ -6,8 +6,8 @@ chart-perception found dot plots more accurately read than horizontal
 bars — same data, less ink, often clearer rank ordering.
 
 API:
-    c.cleveland_dot(data=df, x="value_col", y="category_col", size=5,
-                    line=True, line_color="#bbbbbb")
+    c = pt.chart(df, aes(x="value_col", y="category_col"))
+    c.add_cleveland_dot(size=5, line=True, line_color="#bbbbbb")
 
 Categories live on the y-axis (matches the chart's horizontal orientation).
 Pair with `c.yscale("category", order=...)` to fix the row order.
@@ -87,9 +87,11 @@ def demo():
     cats = ["Python", "JavaScript", "TypeScript", "Rust", "Go", "C++",
             "Java", "Ruby"]
     vals = [42, 38, 27, 18, 14, 11, 22, 7]
-    c = pt.chart()
+    df = {"cat": cats, "val": vals}
+
+    c = pt.chart(df, pt.aes(x="val", y="cat"))
     c.yscale("category", order=cats)
-    c.cleveland_dot({"cat": cats, "val": vals}, x="val", y="cat")
+    c.add_cleveland_dot()
     c.title("Stack share").xlabel("% respondents")
     return c
 

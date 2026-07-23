@@ -5,7 +5,7 @@ drawn as a single line connecting `(0, before)` and `(1, after)`, with a
 dot at each endpoint and an optional label near the right endpoint.
 Tufte's preferred chart for highlighting rank shuffles or per-item deltas.
 
-API: c.slope_chart(data=df, label="col", a="col", b="col",
+API: c.add_slope_chart(df, aes(label="col", a="col", b="col"),
                    left_label="before", right_label="after").
 Each labeled series gets its own color via the normal cycle by calling
 slope_chart per-row, but the common case is a single call with all rows
@@ -80,12 +80,13 @@ def demo():
     before = [62, 71, 55, 80, 48]
     after  = [70, 65, 73, 78, 60]
     df = {"label": labels, "before": before, "after": after}
+    highlight = {"label": ["gamma"], "before": [55], "after": [73]}
+
     c = pt.chart()
     # Background lines in gray, highlight one in C0.
-    c.slope_chart(df, label="label", a="before", b="after",
+    c.add_slope_chart(df, pt.aes(label="label", a="before", b="after"),
                   color="#999999", show_labels=True)
-    c.slope_chart({"label": ["gamma"], "before": [55], "after": [73]},
-                  label="label", a="before", b="after",
+    c.add_slope_chart(highlight, pt.aes(label="label", a="before", b="after"),
                   color="C0", linewidth=2.4, show_labels=False)
     c.xticks([0, 1], ["before", "after"])
     c.title("Score before/after").ylabel("score")

@@ -7,7 +7,7 @@ MA emphasizes signal magnitude across the expression range and makes
 intensity-dependent bias (sequencing's bane) visible at a glance.
 
 API:
-    c.ma(mean_log_expr, log2_fc, padj=None,
+    c.add_ma(mean_log_expr, log2_fc, padj=None,
          padj_threshold=0.05, fc_threshold=1.0,
          sig_color="#d62728", ns_color="#999999")
 
@@ -106,8 +106,9 @@ def demo():
             p = 10 ** -random.uniform(0, 2)
         A.append(a); M.append(m); P.append(p)
     df = {"A": A, "M": M, "P": P}
-    c = pt.chart()
-    c.ma(df, x="A", y="M", padj="P", fc_threshold=1.0, padj_threshold=0.01)
+
+    c = pt.chart(df, pt.aes(x="A", y="M", padj="P"))
+    c.add_ma(fc_threshold=1.0, padj_threshold=0.01)
     c.title("MA plot").xlabel("mean log₂ expression").ylabel("log₂ fold change")
     return c
 

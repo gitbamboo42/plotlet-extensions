@@ -15,10 +15,13 @@ every extension artist:
 
 ```python
 import plotlet as pt
+from plotlet import aes
 import plotlet.extensions          # registers all extension artists
 
-c = pt.chart()
-c.volcano(fc, pvals, labels, fc_threshold=1.0, p_threshold=0.01)
+df = {"fc": fc, "p": pvals, "gene": genes}
+
+c = pt.chart(df, aes(x="fc", y="p", label="gene"))
+c.add_volcano(fc_threshold=1.0, p_threshold=0.01)
 c.save_svg("out.svg")
 ```
 
@@ -26,7 +29,7 @@ Or **import just the one you need** (same registration, lighter):
 
 ```python
 import plotlet as pt
-import plotlet.extensions.volcano   # registers only c.volcano(...)
+import plotlet.extensions.volcano   # registers only c.add_volcano(...)
 ```
 
 Every extension also exposes a `demo()` that returns a fully built `pt.Chart`

@@ -5,8 +5,10 @@ running total, with the final bar showing the cumulative result. Bars are
 colored differently for positive / negative contributions, with an
 optional total bar in a third color.
 
-API: c.waterfall(data=df, label="col", delta="col", total_label="Total",
-                 pos_color="#2ca02c", neg_color="#d62728", total_color="#7f7f7f").
+API:
+    c = pt.chart(df, aes(label="col", delta="col"))
+    c.add_waterfall(total_label="Total",
+                pos_color="#2ca02c", neg_color="#d62728", total_color="#7f7f7f")
 The chart is categorical: each `label` becomes an x category.
 """
 
@@ -127,9 +129,11 @@ def demo():
     Returns a `pt.Chart` ready for `.save_svg()` or further composition."""
     labels = ["Revenue", "COGS", "Op-Ex", "Tax", "Other"]
     deltas = [120, -45, -25, -12, 8]
-    c = pt.chart()
+    df = {"label": labels, "delta": deltas}
+
+    c = pt.chart(df, pt.aes(label="label", delta="delta"))
     c.xscale("category", order=labels + ["Total"])
-    c.waterfall({"label": labels, "delta": deltas}, label="label", delta="delta")
+    c.add_waterfall()
     c.title("Net income breakdown").ylabel("$M").legend(True)
     return c
 

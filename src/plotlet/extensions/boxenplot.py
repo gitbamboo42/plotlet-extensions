@@ -9,9 +9,10 @@ read the levels at a glance.
 
 Input shape (long-form table):
 
-    c.boxen(data=df, x="cat", y="value", fill="group", palette={...})
+    c = pt.chart(df, aes(x="cat", y="value", fill="group"))
+    c.add_boxen(palette={...})
 
-`fill="col"` dodges sub-boxen side-by-side within each cat
+`aes(fill=...)` dodges sub-boxen side-by-side within each cat
 and emits one legend entry per group level. `palette=` accepts a dict
 (level → color) or a sequence; missing entries fall through to TAB10.
 
@@ -225,10 +226,9 @@ def demo():
         rows.append({"group": "D", "treatment": "control", "value": random.gauss(1, 0.4)})
     data = {k: [r[k] for r in rows] for k in rows[0]}
 
-    c = pt.chart()
+    c = pt.chart(data, pt.aes(x="group", y="value", fill="treatment"))
     c.xscale("category", order=["A", "B", "C", "D"])
-    c.boxen(data=data, x="group", y="value", fill="treatment",
-            palette={"control": "#3F97C5", "dose": "#F99917"})
+    c.add_boxen(palette={"control": "#3F97C5", "dose": "#F99917"})
     c.title("Letter-value plot by group and treatment")
     c.xlabel("group").ylabel("value")
     c.legend(True)

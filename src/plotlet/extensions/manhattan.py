@@ -5,8 +5,8 @@ by chromosome, with a horizontal threshold for genome-wide significance
 (5e-8 by convention). The defining figure of every GWAS paper.
 
 API:
-    c.manhattan(data=df, chrom="col", pos="col", pvalue="col",
-                colors=("#3a86ff", "#9bb6e8"),
+    c = pt.chart(df, aes(chrom="col", pos="col", pvalue="col"))
+    c.add_manhattan(colors=("#3a86ff", "#9bb6e8"),
                 sig=5e-8, suggestive=1e-5)
 
 `chrom` is per-SNP chromosome label (int or str). `pos` is bp position
@@ -126,9 +126,10 @@ def demo():
             else:
                 pvals.append(10 ** -random.uniform(0, 5))
     df = {"chrom": chroms, "pos": positions, "pvalue": pvals}
-    c = pt.chart(data_width=720, data_height=260)
-    c.manhattan(df, chrom="chrom", pos="pos", pvalue="pvalue",
-                sig=5e-8, suggestive=1e-5)
+
+    c = pt.chart(df, pt.aes(chrom="chrom", pos="pos", pvalue="pvalue"),
+                 data_width=720, data_height=260)
+    c.add_manhattan(sig=5e-8, suggestive=1e-5)
     c.title("GWAS Manhattan plot").ylabel("−log₁₀(p)")
     c.xticks([])  # chromosome labels drawn inside the artist
     return c

@@ -11,7 +11,7 @@ Useful for spotting deviation from independence at a glance: under
 independence, all rows have the same horizontal split.
 
 API:
-    c.mosaic(table, row_names, col_names, cmap=None,
+    c.add_mosaic(table, row_names, col_names, cmap=None,
              color_by="row")
 
 `table[i][j]` is the count of (row_i, col_j). `color_by="row"` colors
@@ -136,7 +136,7 @@ def demo():
         [212, 673],   # crew
     ]
     c = pt.chart(data_width=440, data_height=300)
-    c.mosaic(table, classes, outcomes, color_by="col")
+    c.add_mosaic(table, classes, outcomes, color_by="col")
     c.xticks([]); c.yticks([])
     c.title("Titanic survival × class").legend(True)
     return c

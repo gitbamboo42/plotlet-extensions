@@ -5,7 +5,8 @@ Y is inverted-rank (1 at the top), x is the period. Each entry's line
 connects its rank from period to period, with a dot at each step.
 
 API:
-    c.bump(data=df, x="period_col", y="value_col", group="series_col")
+    c = pt.chart(df, aes(x="period_col", y="value_col", group="series_col"))
+    c.add_bump()
 
 Tidy input: one row per (period, series) observation. The artist groups
 by series, computes ranks across series within each period (highest
@@ -127,8 +128,9 @@ def demo():
             rows.append({"period": period, "series": name,
                          "value": matrix[p_i][s_i]})
     df = {k: [r[k] for r in rows] for k in rows[0]}
-    c = pt.chart()
-    c.bump(df, x="period", y="value", group="series")
+
+    c = pt.chart(df, pt.aes(x="period", y="value", group="series"))
+    c.add_bump()
     n = len(series_names)
     c.yticks(list(range(1, n + 1)), [str(n + 1 - r) for r in range(1, n + 1)])
     c.title("Quarterly rank").ylabel("rank").legend(True)

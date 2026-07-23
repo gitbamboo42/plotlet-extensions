@@ -13,7 +13,8 @@ data and can be fed straight to built-in `fill_between` / `line` if
 you'd rather skip the artist registration.
 
 API:
-    c.percentile_band(data=df, x="x_col", y="value_col", qs=(0.25, 0.75)).
+    c = pt.chart(df, aes(x="x_col", y="value_col"))
+    c.add_percentile_band(qs=(0.25, 0.75))
 
 Tidy input: one row per (x, value) observation. The artist groups by x
 and computes percentiles within each group.
@@ -113,8 +114,9 @@ def demo():
         for _ in range(30):
             rows.append({"x": x, "y": mu + random.gauss(0, 0.3 + 0.05 * x)})
     df = {k: [r[k] for r in rows] for k in rows[0]}
-    c = pt.chart()
-    c.percentile_band(df, x="x", y="y", qs=(0.1, 0.9), label="10–90%")
+
+    c = pt.chart(df, pt.aes(x="x", y="y"))
+    c.add_percentile_band(qs=(0.1, 0.9), label="10–90%")
     c.title("Median ± 10/90 percentile").xlabel("x").ylabel("y").legend(True)
     return c
 

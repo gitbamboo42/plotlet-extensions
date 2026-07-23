@@ -10,7 +10,7 @@ layer in the user-supplied order (no longest-path inference), and
 ribbons only connect adjacent layers.
 
 API:
-    c.alluvial(layers, transitions)
+    c.add_alluvial(layers, transitions)
 
 `layers` is a list of *(layer_name, [categories_in_order])* tuples.
 `transitions` is a dict keyed by adjacent-layer-index `(i, i+1)`:
@@ -196,7 +196,7 @@ def demo():
                  ("C", "A"): 3,  ("C", "B"): 5,  ("C", "C"): 13},
     }
     c = pt.chart(data_width=560, data_height=320)
-    c.alluvial(layers, transitions)
+    c.add_alluvial(layers, transitions)
     c.xticks([]); c.yticks([])
     c.title("Customer-segment migration").legend(True)
     return c

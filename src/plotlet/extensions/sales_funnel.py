@@ -8,7 +8,9 @@ Renamed from `funnel` to free that name up for the meta-analysis funnel
 plot (see `cookbook/funnel_plot/`). The two are entirely different
 charts that happen to share a one-word name.
 
-API: c.sales_funnel(data=df, label="col", value="col", color="C0", show_values=True).
+API:
+    c = pt.chart(df, aes(label="col", value="col"))
+    c.add_sales_funnel(color="C0", show_values=True)
 The bars are categorical on y; the x-axis is purely visual (no ticks).
 """
 
@@ -75,12 +77,14 @@ def demo():
     Returns a `pt.Chart` ready for `.save_svg()` or further composition."""
     labels = ["Visited", "Signed up", "Activated", "Purchased", "Returned"]
     values = [10000, 3200, 1800, 600, 220]
-    c = pt.chart(data_height=260)
+    df = {"stage": labels, "n": values}
+
+    c = pt.chart(df, pt.aes(label="stage", value="n"), data_height=260)
     # Plotlet's category scale places the first entry at the *top* of
     # the y axis, so passing `labels` directly puts the top-of-funnel
     # stage at the visual top.
     c.yscale("category", order=labels)
-    c.sales_funnel({"stage": labels, "n": values}, label="stage", value="n")
+    c.add_sales_funnel()
     c.title("Onboarding funnel")
     c.xticks([])
     return c

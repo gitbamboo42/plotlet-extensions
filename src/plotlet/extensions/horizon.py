@@ -6,8 +6,10 @@ darker colors. Negative values mirror upward (or use a separate color
 ramp). Widely used in dashboards for visualizing many series in
 limited vertical space.
 
-API: c.horizon(data=df, x="col", y="col", bands=3, base=0,
-               pos_color="#1f77b4", neg_color="#d62728").
+API:
+    c = pt.chart(df, aes(x="col", y="col"))
+    c.add_horizon(bands=3, base=0,
+              pos_color="#1f77b4", neg_color="#d62728")
 The chart's y-domain is [0, band_height], regardless of the data — the
 folding compresses all y info into shaded layers.
 """
@@ -127,8 +129,10 @@ def demo():
     xs = list(range(200))
     ys = [math.sin(x * 0.1) * (1 + 0.4 * math.sin(x * 0.03)) + random.gauss(0, 0.15)
           for x in xs]
-    c = pt.chart(data_height=80, data_width=560)
-    c.horizon({"x": xs, "y": ys}, x="x", y="y", bands=3, base=0)
+    df = {"x": xs, "y": ys}
+
+    c = pt.chart(df, pt.aes(x="x", y="y"), data_height=80, data_width=560)
+    c.add_horizon(bands=3, base=0)
     c.title("Horizon chart").xlabel("t").legend(True)
     c.yticks([])
     return c

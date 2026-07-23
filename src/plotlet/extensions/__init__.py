@@ -7,7 +7,7 @@ single extension under it) registers **every** extension artist at once:
     import plotlet.extensions          # registers all extension artists
 
     c = pt.chart()
-    c.volcano(...)                     # any extension method now works
+    c.add_volcano(...)                     # any extension method now works
 
 This module ships in the `plotlet-extensions` distribution. Core plotlet ships
 a few extensions under the same `plotlet.extensions` namespace but without this

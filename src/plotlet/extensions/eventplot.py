@@ -5,7 +5,7 @@ time. Used for spike trains, sequence motif hits, log timelines. Each
 call adds one *row* of ticks at a given y; call multiple times for
 multiple rows.
 
-API: c.eventplot(data=df, x="position_col", at=0, length=0.6,
+API: c.add_eventplot(df, aes(x="position_col"), at=0, length=0.6,
                   orientation="vertical").
 - `x=`         -> column of event times along the data axis.
 - `at=`        -> scalar data-coord position of the row baseline
@@ -110,8 +110,9 @@ def demo():
             t += random.expovariate(1.0)
             if t < 30:
                 events.append(t)
-        c.eventplot({"t": events}, x="t", at=i, length=0.7, color="C0",
-                    label="trial 0" if i == 0 else None)
+        df = {"t": events}
+        c.add_eventplot(df, pt.aes(x="t"), at=i, length=0.7,
+                    color="C0", label="trial 0" if i == 0 else None)
     c.title("Spike raster").xlabel("time (s)").ylabel("trial")
     return c
 

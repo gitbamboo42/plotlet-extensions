@@ -5,7 +5,7 @@ Categorical x × categorical y grid of dots, where each dot's *size* and
 expression heatmaps with significance encoded as size) and survey
 results (proportion + count).
 
-API: c.bubble_grid(x_cats, y_cats, size_matrix, color_matrix=None,
+API: c.add_bubble_grid(x_cats, y_cats, size_matrix, color_matrix=None,
                    cmap="viridis", smax=12).
 - `size_matrix[i][j]`  -> size value for x_cats[j], y_cats[i].
 - `color_matrix[i][j]` -> color value (same shape). Defaults to size.
@@ -114,7 +114,7 @@ def demo():
     c = pt.chart(data_width=240, data_height=300)
     c.xscale("category", order=samples)
     c.yscale("category", order=genes)
-    c.bubble_grid(samples, genes, size_m, color_m, cmap="RdBu_r", vmin=-1, vmax=1)
+    c.add_bubble_grid(samples, genes, size_m, color_m, cmap="RdBu_r", vmin=-1, vmax=1)
     c.title("Expression × significance")
     return c
 

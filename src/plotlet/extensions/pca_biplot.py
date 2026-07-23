@@ -76,19 +76,21 @@ def pca_biplot(matrix, var_names, sample_labels=None, color=None, palette=None,
     loadings_pc2 = Vt[1]
     c = pt.chart(data_width=400, data_height=400)
     if color is None:
-        c.scatter(data={"x": pc1, "y": pc2}, x="x", y="y", size=2.5, alpha=0.7)
+        scores = {"x": pc1, "y": pc2}
+        c.add_scatter(scores, pt.aes(x="x", y="y"), size=2.5, alpha=0.7)
     else:
         df = {"pc1": pc1, "pc2": pc2, "group": list(color)}
-        c.scatter(x="pc1", y="pc2", color="group", palette=palette,
-                  data=df, size=2.5, alpha=0.7)
+        c.add_scatter(df, pt.aes(x="pc1", y="pc2", color="group"),
+                  palette=palette, size=2.5, alpha=0.7)
         c.legend(True)
     for j, name in enumerate(var_names):
         dx = float(loadings_pc1[j]) * scale_loadings
         dy = float(loadings_pc2[j]) * scale_loadings
-        c.line(data={"x": [0, dx], "y": [0, dy]}, x="x", y="y", color="#d62728", linewidth=1.2)
-        c.biplot_label([dx], [dy], [name], dx=4, dy=-4, color="#d62728")
-    c.axhline(0, color="#cccccc", linewidth=0.6)
-    c.axvline(0, color="#cccccc", linewidth=0.6)
+        loading = {"x": [0, dx], "y": [0, dy]}
+        c.add_line(loading, pt.aes(x="x", y="y"), color="#d62728", linewidth=1.2)
+        c.add_biplot_label([dx], [dy], [name], dx=4, dy=-4, color="#d62728")
+    c.add_axhline(0, color="#cccccc", linewidth=0.6)
+    c.add_axvline(0, color="#cccccc", linewidth=0.6)
     c.title("PCA biplot")
     c.xlabel(f"PC1 ({coord(100 * var_explained[0])} %)")
     c.ylabel(f"PC2 ({coord(100 * var_explained[1])} %)")

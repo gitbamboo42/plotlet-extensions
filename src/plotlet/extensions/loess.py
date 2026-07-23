@@ -8,7 +8,8 @@ noisy `(x, y)` data without assuming a parametric form. Uses
   - configurable `frac` (the "span" — fraction of points used per fit)
 
 API:
-    c.loess(data=df, x="col", y="col", frac=0.5, it=3)
+    c = pt.chart(df, aes(x="col", y="col"))
+    c.add_loess(frac=0.5, it=3)
 
 Earlier versions of this recipe inlined a degree-1, no-robustness
 LOESS in pure Python (no scipy dep). The statsmodels version is
@@ -93,11 +94,12 @@ def demo():
     ys = [math.sin(x) + 0.4 * math.sin(3 * x) + random.gauss(0, 0.3) for x in xs]
     # Throw in a couple of outliers to demonstrate the robust pass.
     ys[20] += 4; ys[150] -= 5
-    c = pt.chart()
-    c.scatter(data={"x": xs, "y": ys}, x="x", y="y", size=1.5, alpha=0.5, label="data")
     df = {"x": xs, "y": ys}
-    c.loess(df, x="x", y="y", frac=0.3, label="LOESS (frac=0.3)")
-    c.loess(df, x="x", y="y", frac=0.7, label="LOESS (frac=0.7)")
+
+    c = pt.chart(df, pt.aes(x="x", y="y"))
+    c.add_scatter(size=1.5, alpha=0.5, label="data")
+    c.add_loess(frac=0.3, label="LOESS (frac=0.3)")
+    c.add_loess(frac=0.7, label="LOESS (frac=0.7)")
     c.title("LOESS smoother").xlabel("x").ylabel("y").legend(True)
     return c
 

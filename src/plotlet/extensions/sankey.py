@@ -11,7 +11,7 @@ data meaning; xlim and ylim become [0, 1]). Pair with `c.xticks([])`
 and `c.yticks([])` for the clean Sankey look.
 
 API:
-    c.sankey(nodes, flows,
+    c.add_sankey(nodes, flows,
              node_pad=0.02,    # vertical gap between stacked nodes (fraction of plot height)
              node_w=0.03,      # node bar width (fraction of plot width)
              ribbon_alpha=0.4,
@@ -254,7 +254,7 @@ def demo():
         "Wind":    "#1f77b4",
         "Nuclear": "#2ca02c",
     }
-    c.sankey(nodes, flows, node_colors=node_colors)
+    c.add_sankey(nodes, flows, node_colors=node_colors)
     c.xticks([]); c.yticks([])
     c.title("Energy flow (TWh)").legend(True)
     return c

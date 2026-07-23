@@ -6,7 +6,7 @@ strip / swarm so you see the raw points plus the central tendency and
 spread without the visual weight of a full boxplot.
 
 API:
-    c.crossbar(cats, mids, lowers, uppers, width=0.5, lw_mid=2.2, lw_outer=1.2)
+    c.add_crossbar(cats, mids, lowers, uppers, width=0.5, lw_mid=2.2, lw_outer=1.2)
 """
 
 SUMMARY = "Three horizontal lines (lo / mid / hi) per category — clean summary overlay over strips/swarms."
@@ -91,7 +91,7 @@ def demo():
     c = pt.chart()
     c.xscale("category", order=cats)
     # Imagine a strip plot under it; we just demo the crossbar here.
-    c.crossbar(cats, means, los, his, color="#222")
+    c.add_crossbar(cats, means, los, his, color="#222")
     c.title("Mean ± SD (crossbar)").ylabel("value")
     return c
 

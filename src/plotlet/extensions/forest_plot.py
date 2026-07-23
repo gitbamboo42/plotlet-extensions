@@ -7,8 +7,8 @@ interpretation. The bottom row is the pooled estimate as a diamond
 spanning its CI.
 
 API:
-    c.forest(data=df, label="col", est="col", lo="col", hi="col",
-             weights="col", ref=1, pooled=None, log_x=False)
+    c = pt.chart(df, aes(label="col", est="col", lo="col", hi="col", weights="col"))
+    c.add_forest(ref=1, pooled=None, log_x=False)
 
 `pooled` is a `(estimate, lower, upper, label)` tuple, drawn as a
 diamond on its own row. `log_x=True` does the on-screen log mapping
@@ -124,9 +124,10 @@ def demo():
     weights = [0.10,  0.18,  0.14,  0.16,  0.22,  0.20]
     pooled  = (0.82, 0.72, 0.93, "Pooled (random)")
     df = {"study": labels, "or": est, "lo": lo, "hi": hi, "w": weights}
-    c = pt.chart(data_width=420, data_height=240)
-    c.forest(df, label="study", est="or", lo="lo", hi="hi",
-             weights="w", ref=1, pooled=pooled)
+
+    c = pt.chart(df, pt.aes(label="study", est="or", lo="lo", hi="hi", weights="w"),
+                 data_width=420, data_height=240)
+    c.add_forest(ref=1, pooled=pooled)
     c.title("Effect of intervention").xlabel("Odds ratio (95 % CI)")
     c.yticks([])
     return c

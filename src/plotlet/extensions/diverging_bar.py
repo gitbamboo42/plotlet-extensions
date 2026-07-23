@@ -6,8 +6,8 @@ right, neutral straddling zero) and for any "score relative to baseline"
 comparison.
 
 API:
-    c.diverging_bar(data=df, x="value_col", y="category_col",
-                    pos_color="#1f77b4", neg_color="#d62728",
+    c = pt.chart(df, aes(x="value_col", y="category_col"))
+    c.add_diverging_bar(pos_color="#1f77b4", neg_color="#d62728",
                     height=0.7)
 
 Pair with `c.yscale("category", order=...)` so rows stay in submission
@@ -92,9 +92,11 @@ def demo():
     items = ["Quality", "Speed", "Support", "Price", "Onboarding",
              "Docs", "Reliability", "Mobile UX"]
     nps = [40, 25, 10, -5, -20, 15, 35, -30]  # net promoter per category
-    c = pt.chart(data_width=420)
+    df = {"item": items, "nps": nps}
+
+    c = pt.chart(df, pt.aes(x="nps", y="item"), data_width=420)
     c.yscale("category", order=items)
-    c.diverging_bar({"item": items, "nps": nps}, x="nps", y="item")
+    c.add_diverging_bar()
     c.title("Net promoter by area").xlabel("NPS").legend(True)
     return c
 

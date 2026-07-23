@@ -10,7 +10,7 @@ Stacks neatly: each call adds one bracket layer above the previous, so
 multiple `significance_brackets(...)` calls produce a tidy "ladder".
 
 API:
-    c.significance_brackets(data=df, a="col", b="col", label="col",
+    c.add_significance_brackets(df, aes(a="col", b="col", label="col"),
                             y_top=None, y_step=0.06, offset=0.0)
 
 `a=` and `b=` are columns of paired category names; `label=` is the
@@ -124,16 +124,17 @@ def demo():
     # built-in bar(mean) for simplicity so this file runs standalone.
     means = [sum(g) / len(g) for g in groups]
     df = {"cat": cats, "mean": means}
-    c = pt.chart(data_height=320)
-    c.xscale("category", order=cats)
-    c.bar(data=df, x="cat", y="mean")
-    # Brackets above bars: comparisons + annotations.
+    # Brackets above bars: comparisons + annotations, a separate table.
     sig = {
         "a":     ["control", "control", "drug B"],
         "b":     ["drug A",  "drug C",  "drug C"],
         "label": ["**",      "***",     "*"],
     }
-    c.significance_brackets(sig, a="a", b="b", label="label",
+
+    c = pt.chart(df, pt.aes(x="cat", y="mean"), data_height=320)
+    c.xscale("category", order=cats)
+    c.add_bar()
+    c.add_significance_brackets(sig, pt.aes(a="a", b="b", label="label"),
                             y_top=max(means) + 0.5, y_step=0.7)
     c.title("Mean response with significance").ylabel("score")
     return c

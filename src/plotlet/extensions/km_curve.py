@@ -10,7 +10,7 @@ For two-group comparisons, an optional companion helper
 chi-squared statistic and its p-value using `scipy.stats.chi2`.
 
 API:
-    c.km(data=df, time="col", event="col", ci=True, level=0.95)
+    c.add_km(df, aes(time="col", event="col"), ci=True, level=0.95)
 - `time=`  -> column of follow-up duration (>= 0) per subject.
 - `event=` -> column of 1 if event observed, 0 if censored.
 - `ci`     -> draw a Greenwood CI band (default True).
@@ -198,9 +198,12 @@ def demo():
     t1, e1 = simulate(rate=0.04)
     t2, e2 = simulate(rate=0.08)
     chi_sq, p_val = logrank_pvalue(t1, e1, t2, e2)
+    df1 = {"t": t1, "e": e1}
+    df2 = {"t": t2, "e": e2}
+
     c = pt.chart()
-    c.km({"t": t1, "e": e1}, time="t", event="e", label="treatment")
-    c.km({"t": t2, "e": e2}, time="t", event="e", label="control")
+    c.add_km(df1, pt.aes(time="t", event="e"), label="treatment")
+    c.add_km(df2, pt.aes(time="t", event="e"), label="control")
     c.title(f"Kaplan-Meier survival (log-rank χ²={coord(chi_sq)}, p={p_val:.4f})")
     c.xlabel("months").ylabel("S(t)").legend(True)
     return c

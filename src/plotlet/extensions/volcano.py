@@ -5,8 +5,8 @@ and "not significant" segments and optional labels for the top hits. The
 RNA-seq / proteomics / phospho-proteomics workhorse.
 
 API:
-    c.volcano(data=df, x="log2fc_col", y="pvalue_col", label="gene_col",
-              fc_threshold=1.0, p_threshold=0.05,
+    c = pt.chart(df, aes(x="log2fc_col", y="pvalue_col", label="gene_col"))
+    c.add_volcano(fc_threshold=1.0, p_threshold=0.05,
               up_color="#d62728", down_color="#1f77b4", ns_color="#999999",
               n_label=10)
 
@@ -132,9 +132,9 @@ def demo():
             pvals.append(10 ** -random.uniform(0, 3))
     labels = [f"g{i:04d}" for i in range(n)]
     df = {"fc": fc, "p": pvals, "gene": labels}
-    c = pt.chart()
-    c.volcano(df, x="fc", y="p", label="gene",
-              fc_threshold=1.0, p_threshold=0.01, n_label=8)
+
+    c = pt.chart(df, pt.aes(x="fc", y="p", label="gene"))
+    c.add_volcano(fc_threshold=1.0, p_threshold=0.01, n_label=8)
     c.title("Differential expression").xlabel("log₂ fold change").ylabel("−log₁₀(p)").legend(True)
     return c
 

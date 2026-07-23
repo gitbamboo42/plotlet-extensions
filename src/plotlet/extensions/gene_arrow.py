@@ -5,8 +5,9 @@ head pointing in the strand direction. Useful for genomics-style "where
 on the genome / chromosome is each gene" tracks; also fine for any
 directional interval data.
 
-API: c.gene_arrow(data=df, start="col", end="col", strand="col",
-                  label="col", at=0, height=0.6, head_frac=0.25).
+API:
+    c = pt.chart(df, aes(start="col", end="col", strand="col", label="col"))
+    c.add_gene_arrow(at=0, height=0.6, head_frac=0.25)
 - `start=`, `end=` — interval bound columns in data x units.
 - `strand=`        — column of +1 / -1 per feature (+1 points right).
 - `label=`         — optional column of per-feature labels drawn above
@@ -110,9 +111,9 @@ def demo():
         "strand": [  1,    1,   -1,    1,   -1],
         "name":   ["geneA", "geneB", "geneC", "geneD", "geneE"],
     }
-    c = pt.chart(data_height=120)
-    c.gene_arrow(df, start="start", end="end", strand="strand", label="name",
-                 at=0, height=0.7)
+    c = pt.chart(df, pt.aes(start="start", end="end", strand="strand", label="name"),
+                 data_height=120)
+    c.add_gene_arrow(at=0, height=0.7)
     c.ylim(-0.7, 0.9).yticks([])
     c.title("Gene track").xlabel("position (bp)")
     return c

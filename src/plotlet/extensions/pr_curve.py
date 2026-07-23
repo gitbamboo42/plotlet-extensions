@@ -6,7 +6,7 @@ mediocre classifier look great on ROC. AUPR (area under PR) is
 trapezoidal-integrated inline and appended to the legend label.
 
 API:
-    c.pr(data=df, true="col", score="col", label=...)
+    c.add_pr(df, aes(true="col", score="col"), label=...)
 
 `true=` is 0/1; `score=` is a numeric score (higher = predict 1).
 The label string is auto-augmented with "(AUPR = 0.42)" so the legend
@@ -117,11 +117,14 @@ def demo():
     y_true = [t for t, _ in paired]
     good = [s for _, s in paired]
     weak = [s + random.gauss(0, 1.0) for s in good]
+    df_good = {"y": y_true, "s": good}
+    df_weak = {"y": y_true, "s": weak}
+
     c = pt.chart(data_width=320, data_height=320)
     prevalence = n_pos / (n_pos + n_neg)
-    c.pr({"y": y_true, "s": good}, true="y", score="s",
+    c.add_pr(df_good, pt.aes(true="y", score="s"),
          label="strong model", prevalence=prevalence)
-    c.pr({"y": y_true, "s": weak}, true="y", score="s",
+    c.add_pr(df_weak, pt.aes(true="y", score="s"),
          label="weak model", _first=False)
     c.title("Precision-Recall").xlabel("recall").ylabel("precision").legend(True)
     return c

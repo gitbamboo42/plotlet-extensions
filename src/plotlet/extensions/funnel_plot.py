@@ -12,7 +12,8 @@ the two share a one-word name in everyday usage but solve totally
 different problems.
 
 API:
-    c.funnel_plot(data=df, est="col", se="col", pooled=None, z=1.96)
+    c = pt.chart(df, aes(est="col", se="col"))
+    c.add_funnel_plot(pooled=None, z=1.96)
 - `est=`      — column of per-study effect estimates.
 - `se=`       — column of per-study standard errors.
 - `pooled`    — the meta-analytic mean (drawn as a vertical line). If
@@ -118,8 +119,10 @@ def demo():
         if se > 0.25 and e < 0.10 and random.random() < 0.6:
             continue
         estimates.append(e); ses.append(se)
-    c = pt.chart(data_width=420, data_height=320)
-    c.funnel_plot({"est": estimates, "se": ses}, est="est", se="se")
+    df = {"est": estimates, "se": ses}
+
+    c = pt.chart(df, pt.aes(est="est", se="se"), data_width=420, data_height=320)
+    c.add_funnel_plot()
     c.title("Funnel plot (publication-bias check)")
     c.xlabel("effect estimate").ylabel("standard error")
     return c

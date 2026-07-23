@@ -36,9 +36,11 @@ def jointplot(xs, ys, kind: str = "scatter", bins: int = 30,
     the `hexbin` recipe registered).
     """
     xs = to_list(xs); ys = to_list(ys)
+    xy = {"x": xs, "y": ys}
+
     # Top marginal: histogram of x.
-    top = pt.chart(data_width=panel_size, data_height=marg_size)
-    top.hist(data={"x": xs}, x="x", bins=bins)
+    top = pt.chart(xy, pt.aes(x="x"), data_width=panel_size, data_height=marg_size)
+    top.add_hist(bins=bins)
     top.xticks([])
     top.yticks([])
     # Right marginal: histogram of y, drawn rotated by swapping x/y.
@@ -57,15 +59,15 @@ def jointplot(xs, ys, kind: str = "scatter", bins: int = 30,
                 counts[i] += 1
         # Draw each bin as a `rect`. y in [lo + i*w, lo + (i+1)*w], x in [0, count].
         for i, c_ in enumerate(counts):
-            right.rect(0, lo + i * width, c_, width, color="#1f77b4")
+            right.add_rect(0, lo + i * width, c_, width, color="#1f77b4")
     right.xticks([])
     right.yticks([])
     # Main: scatter (or hex) of (x, y).
-    main = pt.chart(data_width=panel_size, data_height=panel_size)
+    main = pt.chart(xy, pt.aes(x="x", y="y"), data_width=panel_size, data_height=panel_size)
     if kind == "hex":
-        main.hexbin(data={"x": xs, "y": ys}, x="x", y="y", gridsize=30)
+        main.add_hexbin(gridsize=30)
     else:
-        main.scatter(data={"x": xs, "y": ys}, x="x", y="y", size=1.5, alpha=0.6)
+        main.add_scatter(size=1.5, alpha=0.6)
     # Spacer (top-right, blank).
     spacer = pt.chart(data_width=marg_size, data_height=marg_size)
     spacer.xticks([]); spacer.yticks([])

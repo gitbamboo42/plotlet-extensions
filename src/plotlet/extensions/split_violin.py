@@ -12,8 +12,8 @@ left commented at the top of the file for users who'd rather not depend
 on scipy.
 
 API:
-    c.split_violin(data=df, x="cat_col", y="value_col", split="group_col",
-                   labels=("A", "B"),
+    c = pt.chart(df, aes(x="cat_col", y="value_col", split="group_col"))
+    c.add_split_violin(labels=("A", "B"),
                    width=0.8, inner="box")
 
 `split` must have exactly 2 unique levels — the first-appearing level
@@ -209,9 +209,10 @@ def demo():
         for v in female[ci]:
             rows.append({"genotype": cat, "sex": "female", "expr": v})
     df = {k: [r[k] for r in rows] for k in rows[0]}
-    c = pt.chart()
+
+    c = pt.chart(df, pt.aes(x="genotype", y="expr", split="sex"))
     c.xscale("category", order=cats)
-    c.split_violin(df, x="genotype", y="expr", split="sex")
+    c.add_split_violin()
     c.title("Split violin by sex").xlabel("genotype").ylabel("expression")
     return c
 

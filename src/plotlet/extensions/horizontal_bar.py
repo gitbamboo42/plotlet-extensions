@@ -3,7 +3,9 @@
 Categorical y, numeric x. Useful when the category names are long —
 horizontal labels read more easily than rotated vertical ones.
 
-API: c.barh(data=df, x="value_col", y="category_col", width=0.8).
+API:
+    c = pt.chart(df, aes(x="value_col", y="category_col"))
+    c.add_barh(width=0.8)
 """
 
 SUMMARY = '`barh` for long category labels.'
@@ -68,11 +70,13 @@ def demo():
     Returns a `pt.Chart` ready for `.save_svg()` or further composition."""
     cats = ["Python", "JavaScript", "TypeScript", "Rust", "Go", "C++"]
     vals = [42, 38, 27, 18, 14, 11]
-    c = pt.chart()
+    df = {"cat": cats, "val": vals}
+
+    c = pt.chart(df, pt.aes(x="val", y="cat"))
     # Plotlet places the first category at the *top* of the y axis, so
     # passing `cats` directly puts the largest bar at the top.
     c.yscale("category", order=cats)
-    c.barh({"cat": cats, "val": vals}, x="val", y="cat")
+    c.add_barh()
     c.title("Stack share").xlabel("% respondents")
     return c
 

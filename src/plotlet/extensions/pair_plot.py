@@ -42,12 +42,12 @@ def pair_plot(data, color: str | None = None, palette=None,
         for j, nj in enumerate(names):
             c = pt.chart(data_width=panel_size, data_height=panel_size)
             if i == j:
-                c.hist(x=ni, data=data, bins=hist_bins)
+                c.add_hist(data, pt.aes(x=ni), bins=hist_bins)
             elif color is None:
-                c.scatter(x=nj, y=ni, data=data, size=scatter_size)
+                c.add_scatter(data, pt.aes(x=nj, y=ni), size=scatter_size)
             else:
-                c.scatter(x=nj, y=ni, color=color, palette=palette,
-                          data=data, size=scatter_size)
+                c.add_scatter(data, pt.aes(x=nj, y=ni, color=color),
+                          palette=palette, size=scatter_size)
             # Only the outer cells get axis labels — interior is busy enough.
             if i == n - 1:
                 c.xlabel(nj)

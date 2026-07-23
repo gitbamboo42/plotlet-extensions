@@ -7,8 +7,8 @@ method B" comparisons. Easier to read than a paired bar chart for many
 categories.
 
 API:
-    c.dumbbell(data=df, y="category_col", a="col", b="col",
-               a_color="#1f77b4", b_color="#ff7f0e",
+    c = pt.chart(df, aes(y="category_col", a="col", b="col"))
+    c.add_dumbbell(a_color="#1f77b4", b_color="#ff7f0e",
                up_color="#2ca02c", down_color="#d62728",
                size=4)
 
@@ -85,9 +85,10 @@ def demo():
     year_a = [70, 68, 72, 71, 78, 65, 60, 67, 69, 62]
     year_b = [78, 75, 81, 80, 83, 72, 72, 79, 75, 70]
     df = {"country": countries, "y1980": year_a, "y2020": year_b}
-    c = pt.chart()
+
+    c = pt.chart(df, pt.aes(y="country", a="y1980", b="y2020"))
     c.yscale("category", order=countries)
-    c.dumbbell(df, y="country", a="y1980", b="y2020")
+    c.add_dumbbell()
     c.title("Life expectancy: 1980 → 2020").xlabel("years")
     return c
 

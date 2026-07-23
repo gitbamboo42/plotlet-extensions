@@ -7,7 +7,7 @@ specialized for classifier evaluation — but evaluation has its own
 conventions (rows = true class, cols = predicted class, axis labels
 specific, diagonal emphasized) that justify a dedicated recipe.
 
-API: c.confusion_matrix(y_true, y_pred, classes=None, normalize="row").
+API: c.add_confusion_matrix(y_true, y_pred, classes=None, normalize="row").
 - `classes` — explicit class label order; defaults to sorted unique values.
 - `normalize` — "row" (per true class) | "col" | "all" | None (raw counts).
 """
@@ -146,7 +146,7 @@ def demo():
     # Plotlet places the first category at the top of the y axis, so passing
     # `classes` directly gives the top→bottom reading order we want.
     c.yscale("category", order=classes)
-    c.confusion_matrix(y_true, y_pred, classes=classes, normalize="row")
+    c.add_confusion_matrix(y_true, y_pred, classes=classes, normalize="row")
     c.title("Confusion matrix").xlabel("predicted").ylabel("true")
     return c
 

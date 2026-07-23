@@ -7,9 +7,10 @@ readable at once — modern biology paper standard.
 
 Input shape (long-form table):
 
-    c.raincloud(data=df, x="cat", y="value", fill="group", palette={...})
+    c = pt.chart(df, aes(x="cat", y="value", fill="group"))
+    c.add_raincloud(palette={...})
 
-`fill="col"` dodges sub-rainclouds side-by-side within
+`aes(fill=...)` dodges sub-rainclouds side-by-side within
 each cat and emits one legend entry per group level. `palette=` accepts
 a dict (level → color) or a sequence; missing entries fall through to
 TAB10.
@@ -288,10 +289,9 @@ def demo():
                      "score": random.gauss(2.5, 0.4)})
     data = {k: [r[k] for r in rows] for k in rows[0]}
 
-    c = pt.chart()
+    c = pt.chart(data, pt.aes(x="cond", y="score", fill="treatment"))
     c.xscale("category", order=["control", "drug A", "drug B"])
-    c.raincloud(data=data, x="cond", y="score", fill="treatment",
-                palette={"baseline": "#3F97C5", "followup": "#F99917"})
+    c.add_raincloud(palette={"baseline": "#3F97C5", "followup": "#F99917"})
     c.title("Raincloud by condition and treatment")
     c.xlabel("group").ylabel("score")
     c.legend(True)

@@ -4,7 +4,7 @@ A lollipop is a stem from y=0 to y=value with a circle at the top — useful
 for sparse comparisons (rankings, deltas, GWAS-style hits).
 
 The whole recipe is below: no edits to plotlet's source. After registration,
-`c.lollipop(data=df, x="col", y="col")` Just Works on any `Chart` —
+`c.add_lollipop(df, aes(x="col", y="col"))` Just Works on any `Chart` —
 autoscaling, gridlines, color cycling, and the legend integrate for free.
 The optional `legend_entries` hook lets the legend entry actually look
 like a tiny lollipop instead of the default colored line.
@@ -83,11 +83,12 @@ def demo():
     """Build the demonstration chart with synthetic data.
 
     Returns a `pt.Chart` ready for `.save_svg()` or further composition."""
-    c = pt.chart()
     a = {"x": [1, 2, 3, 4, 5, 6, 7], "y": [3, 7, 2, 9, 4, 8, 5]}
     b = {"x": [1.3, 2.3, 3.3, 4.3, 5.3, 6.3, 7.3], "y": [5, 3, 8, 2, 6, 4, 7]}
-    c.lollipop(a, x="x", y="y", label="A")
-    c.lollipop(b, x="x", y="y", label="B", size=4)
+
+    c = pt.chart()
+    c.add_lollipop(a, pt.aes(x="x", y="y"), label="A")
+    c.add_lollipop(b, pt.aes(x="x", y="y"), label="B", size=4)
     c.title("Lollipop chart").xlabel("position").ylabel("score")
     c.gridlines(True).legend(True)
     return c

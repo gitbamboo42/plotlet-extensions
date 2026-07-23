@@ -5,8 +5,9 @@ with a pixel-offset (`dx`, `dy`) from each anchor point. Renders text
 as paths via plotlet's bundled DejaVu Sans, so output stays font-
 independent and reproducible.
 
-API: c.text_label(data=df, x="col", y="col", label="col",
-                   fontsize=11, anchor="middle", dx=0, dy=-6).
+API:
+    c = pt.chart(df, aes(x="col", y="col", label="col"))
+    c.add_text_label(fontsize=11, anchor="middle", dx=0, dy=-6)
 - `dx`, `dy` — pixel offset from each (xs[i], ys[i]) point.
 - `anchor`   — SVG text-anchor: "start" | "middle" | "end".
 """
@@ -69,9 +70,10 @@ def demo():
     Returns a `pt.Chart` ready for `.save_svg()` or further composition."""
     df = {"x": [1, 2, 3, 4, 5], "y": [3, 7, 4, 9, 5],
           "label": ["A", "B", "C", "D", "E"]}
-    c = pt.chart()
-    c.scatter(df, x="x", y="y")
-    c.text_label(df, x="x", y="y", label="label", dy=-10, fontsize=11)
+
+    c = pt.chart(df, pt.aes(x="x", y="y"))
+    c.add_scatter()
+    c.add_text_label(pt.aes(label="label"), dy=-10, fontsize=11)
     c.title("Scatter with point labels").xlabel("x").ylabel("y")
     return c
 

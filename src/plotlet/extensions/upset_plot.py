@@ -12,7 +12,7 @@ out here to keep the artist focused. The result reads top-to-bottom:
 "which intersection?" → "how big?".
 
 API:
-    c.upset(set_names, sets, n_top=None)
+    c.add_upset(set_names, sets, n_top=None)
 
 `sets` is a dict-like `{name: set_of_members}`. The artist computes the
 2ⁿ intersections, sorts descending by size, optionally keeps the top
@@ -173,7 +173,7 @@ def demo():
         "Methylome":  sample(0.15),
     }
     c = pt.chart(data_width=520, data_height=300)
-    c.upset(list(sets), sets, n_top=12)
+    c.add_upset(list(sets), sets, n_top=12)
     c.legend(True)
     c.xticks([])
     return c

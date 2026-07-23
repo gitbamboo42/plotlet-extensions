@@ -4,7 +4,7 @@ A grid of colored cells, one per day, laid out as weeks (columns) ×
 weekdays (rows) with each week's column spanning all 7 days in
 chronological order. Values map through a colormap.
 
-API: c.calendar_heatmap(dates, values, cmap="Greens", vmin=None, vmax=None).
+API: c.add_calendar_heatmap(dates, values, cmap="Greens", vmin=None, vmax=None).
 `dates` is an iterable of `datetime.date` (or `datetime.datetime`); `values`
 aligns 1-to-1 with dates.
 """
@@ -124,7 +124,7 @@ def demo():
     dates = [start + datetime.timedelta(days=i) for i in range(n_days)]
     values = [max(0, int(random.gauss(2.5, 2.0))) for _ in dates]
     c = pt.chart(data_width=560, data_height=140)
-    c.calendar_heatmap(dates, values, cmap="Greens")
+    c.add_calendar_heatmap(dates, values, cmap="Greens")
     c.title("Daily activity (first half of 2025)")
     c.yticks([]); c.xticks([])
     return c

@@ -7,8 +7,8 @@ categorical (age band). The demography classic — also useful for any
 deserve symmetric visual emphasis.
 
 API:
-    c.pyramid(data=df, y="cat_col", left="col", right="col",
-              left_color="#1f77b4", right_color="#e377c2",
+    c = pt.chart(df, aes(y="cat_col", left="col", right="col"))
+    c.add_pyramid(left_color="#1f77b4", right_color="#e377c2",
               left_label="left", right_label="right",
               height=0.8)
 
@@ -92,10 +92,11 @@ def demo():
     male   = [110, 125, 130, 128, 120, 105,  85,  60, 30]
     female = [105, 120, 128, 130, 125, 112,  95,  78, 55]
     df = {"band": bands, "male": male, "female": female}
-    c = pt.chart(data_width=480, data_height=320)
+
+    c = pt.chart(df, pt.aes(y="band", left="male", right="female"),
+                 data_width=480, data_height=320)
     c.yscale("category", order=bands)
-    c.pyramid(df, y="band", left="male", right="female",
-              left_label="male", right_label="female")
+    c.add_pyramid(left_label="male", right_label="female")
     c.title("Population pyramid").xlabel("count (thousands)")
     return c
 

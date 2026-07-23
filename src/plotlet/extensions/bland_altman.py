@@ -5,7 +5,9 @@ difference (bias) and the 95 % limits of agreement (bias ± 1.96 σ). The
 canonical "do two measurement methods agree?" plot in clinical and
 analytical-chem literature.
 
-API: c.bland_altman(data=df, a="col", b="col").
+API:
+    c = pt.chart(df, aes(a="col", b="col"))
+    c.add_bland_altman()
 """
 
 SUMMARY = 'Agreement plot: (a + b) / 2 vs (a − b) with bias and ±1.96 SD limits.'
@@ -84,8 +86,10 @@ def demo():
     # disagreement at higher values.
     a = [random.uniform(20, 100) for _ in range(80)]
     b = [v + random.gauss(2, 0.05 * v) for v in a]
-    c = pt.chart()
-    c.bland_altman({"a": a, "b": b}, a="a", b="b")
+    df = {"a": a, "b": b}
+
+    c = pt.chart(df, pt.aes(a="a", b="b"))
+    c.add_bland_altman()
     c.title("Bland–Altman agreement").xlabel("mean of methods").ylabel("difference (A − B)")
     return c
 
