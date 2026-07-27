@@ -44,44 +44,32 @@ After `import plotlet.extensions`, `plotlet.extensions.loaded` lists what
 registered and `plotlet.extensions.failed` maps any module that raised (e.g. a
 missing optional dependency) to its exception.
 
-> **Editable installs:** the one-import-loads-all convenience relies on this
-> package's `__init__.py`. Under an editable (`pip install -e`) checkout of both
-> repos, core's source dir shadows it, so `import plotlet.extensions` won't
-> auto-load — import each extension by name during local dev. A normal
-> (wheel/PyPI) install works as described above.
+> **Editable installs:** install both packages the same way. Two normal
+> installs work, and two editable (`pip install -e`) checkouts work. The
+> mix fails: with an editable core plotlet, a normal install of
+> plotlet-extensions is invisible and `import plotlet.extensions` raises
+> `ModuleNotFoundError` — install this package editable too.
 
 ## How it fits with plotlet
 
-This distribution ships ~43 domain-specific artists (volcano, manhattan, sankey,
-raincloud, ecdf, ma_plot, calendar_heatmap, km_curve, upset_plot, …) plus the
-`plotlet.extensions` loader (`__init__.py`) that registers them all. A handful of
-extensions that core plotlet's own tests and cookbook depend on
-(`numeric_bar`, `curved_tree`, `annotation_strip`, `chord_links`, `chord_ribbon`)
-ship with **core plotlet** itself. Both sets live under the same
-`plotlet.extensions.<name>` import path, so you never need to care which
-distribution a given extension came from — install `plotlet-extensions` and
-`import plotlet.extensions` gives you the whole set.
-
-Mechanically: core plotlet exposes `plotlet.extensions` as a namespace package
-(its few extensions, importable by name); installing `plotlet-extensions` adds
-the rest **and** the `__init__.py` loader, which turns `import plotlet.extensions`
-into "register everything".
+This distribution ships 43 domain-specific artists (volcano, manhattan, sankey,
+raincloud, ma_plot, calendar_heatmap, km_curve, upset_plot, …) plus the
+`plotlet.extensions` loader (`__init__.py`) that registers them all. Core
+plotlet ships its built-ins under `src/plotlet/artists/` and none of
+`plotlet.extensions` — this package owns the whole
+`plotlet.extensions.<name>` import path.
 
 ## Gallery
 
-`gallery/` holds a one-page visual gallery of every extension (`index.html`,
-one card per artist). Ways to view it:
+Every artist is rendered in the plotlet website's
+**[extensions gallery](https://gitbamboo42.github.io/plotlet/extensions.html)** —
+one tile per artist, generated from each module's own `demo()` when the
+site builds.
 
-- **Rendered page:** enable GitHub Pages for this repo (*Settings → Pages*,
-  deploy from `main`), then open
-  `https://gitbamboo42.github.io/plotlet-extensions/gallery/`. GitHub does not
-  render `.html` files in the repo browser, so Pages is the way to see the full
-  page online.
-- **Single artist:** open any `gallery/<name>.svg` directly on GitHub — it
-  renders as an image.
-- **Locally:** open `gallery/index.html` in a browser.
-
-Regenerate after changing an extension with `python gallery/_gallery.py`.
+For a local preview while developing, `python gallery/_gallery.py`
+renders every demo into `gallery/` and writes `gallery/index.html`;
+open it in a browser. The rendered files are gitignored — the website
+is the published gallery.
 
 ## Writing your own
 
