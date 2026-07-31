@@ -57,7 +57,7 @@ pt.add_artist(pt.ArtistSpec(
     xdomain=lambda a: a["xs"], ydomain=lambda a: a["ys"],
     draw=_bplabel_draw,
     uses_color_cycle=False, layer="foreground",
-    accepts_data_positional=False,
+    data_input="none",
 ))
 
 

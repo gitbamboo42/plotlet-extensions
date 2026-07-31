@@ -109,7 +109,7 @@ pt.add_artist(pt.ArtistSpec(
     uses_color_cycle=False,
     legend_gradient=calhm_legend_gradient,
     tight_domain=True,
-    accepts_data_positional=False,
+    data_input="none",
 ))
 
 

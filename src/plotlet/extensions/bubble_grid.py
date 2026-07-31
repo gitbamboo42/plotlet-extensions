@@ -96,7 +96,7 @@ pt.add_artist(pt.ArtistSpec(
     draw=bubble_draw,
     uses_color_cycle=False,
     legend_gradient=bubble_legend_gradient,
-    accepts_data_positional=False,
+    data_input="none",
 ))
 
 

@@ -153,7 +153,7 @@ pt.add_artist(pt.ArtistSpec(
     uses_color_cycle=False,
     legend_entries=upset_legend_entries,
     frame_defaults=upset_frame_defaults,
-    accepts_data_positional=False,
+    data_input="none",
 ))
 
 

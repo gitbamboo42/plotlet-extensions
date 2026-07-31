@@ -216,7 +216,7 @@ pt.add_artist(pt.ArtistSpec(
     uses_color_cycle=False,
     tight_domain=True,
     legend_entries=sankey_legend_entries,
-    accepts_data_positional=False,
+    data_input="none",
 ))
 
 

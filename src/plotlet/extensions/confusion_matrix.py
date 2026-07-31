@@ -114,7 +114,7 @@ pt.add_artist(pt.ArtistSpec(
     draw=cm_draw,
     uses_color_cycle=False,
     legend_gradient=cm_legend_gradient,
-    accepts_data_positional=False,
+    data_input="none",
 ))
 
 

@@ -66,7 +66,7 @@ pt.add_artist(pt.ArtistSpec(
     ydomain=crossbar_ydomain,
     draw=crossbar_draw,
     layer="foreground",
-    accepts_data_positional=False,
+    data_input="none",
 ))
 
 
