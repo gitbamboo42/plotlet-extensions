@@ -19,7 +19,7 @@ import plotlet as pt
 from plotlet.draw import circle
 from plotlet.utils import to_list, to_list_2d, pack_opts
 from plotlet.draw import colormap, ContinuousNorm
-from plotlet._spec import _D
+from plotlet._spec import SPEC
 
 
 def bubble_record(x_cats=None, y_cats=None, size_matrix=None, color_matrix=None,
@@ -41,7 +41,7 @@ def bubble_ydomain(a): return a["y_cats"]
 
 
 def bubble_draw(a, ctx):
-    cmap = colormap(a["opts"].get("cmap", _D["default_cmap"]))
+    cmap = colormap(a["opts"].get("cmap", SPEC["cmap"]))
     smax = a["opts"].get("smax", 12)
     flat_s = [v for row in a["size_m"] for v in row if v == v]
     flat_c = [v for row in a["color_m"] for v in row if v == v]
@@ -82,7 +82,7 @@ def bubble_draw(a, ctx):
 def bubble_legend_gradient(a):
     flat = [v for row in a["color_m"] for v in row if v == v]
     return {"kind": "continuous",
-            "cmap": a["opts"].get("cmap", _D["default_cmap"]),
+            "cmap": a["opts"].get("cmap", SPEC["cmap"]),
             "vmin": a["opts"].get("vmin", min(flat) if flat else 0.0),
             "vmax": a["opts"].get("vmax", max(flat) if flat else 1.0),
             "norm": "linear"}

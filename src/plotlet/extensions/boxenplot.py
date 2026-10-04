@@ -12,6 +12,8 @@ Input shape (long-form table):
     c = pt.chart(df, aes(x="cat", y="value", fill="group"))
     c.add_boxen(palette={...})
 
+Swap the mapping — `aes(x="value", y="cat")` — for horizontal boxen.
+
 `aes(fill=...)` dodges sub-boxen side-by-side within each cat
 and emits one legend entry per group level. `palette=` accepts a dict
 (level → color) or a sequence; missing entries fall through to TAB10.
@@ -25,7 +27,12 @@ Aesthetics:
   - `palette=`               — maps levels → fills when `fill=` is a column.
 
 Other styling kwargs (all optional):
-  - `orientation='v'`        — `'h'` for horizontal boxen (cats on y axis).
+  - `orientation=None`       — which axis holds the categories: `'x'` (the
+                               upright layout) or `'y'`. Unset guesses it —
+                               whichever of x/y is the discrete column
+                               becomes the category axis, so
+                               `aes(x="value", y="cat")` reads as
+                               horizontal on its own.
   - `width=0.7`              — total dodge-group width as a band fraction.
   - `gap=0.1`                — fraction of slot width left as a gap between
                                adjacent dodged sub-boxen.
@@ -44,7 +51,8 @@ import plotlet as pt
 from plotlet.draw import rect, segment
 from plotlet.draw import TAB10, resolve_color
 from plotlet.utils import (to_list, quantile, resolve_aes, palette_color,
-                            dodge_positions, categorical_groups, pack_opts)
+                            dodge_positions, categorical_groups, pack_opts,
+                            check_option, resolve_orientation)
 from plotlet._spec import _FRAME
 
 
@@ -81,8 +89,11 @@ def boxen_record(data=None, x=None, y=None, fill=True,
         raise TypeError(
             "boxen requires data=, x=, y= (fill= optional)."
         )
+    check_option("boxen", "orientation", orientation, ("x", "y"))
     do_fill, fill_literal, group_col = _resolve_fill_kwarg(data, fill)
-    cats, groups, vals = categorical_groups(data, x, y, group_col)
+    orientation, cat_col, val_col = resolve_orientation(
+        "boxen", data, x, y, orientation)
+    cats, groups, vals = categorical_groups(data, cat_col, val_col, group_col)
     opts = pack_opts(palette=palette, width=width, gap=gap,
                      max_levels=max_levels, linewidth=linewidth,
                      median_linewidth=median_linewidth, color=color,
@@ -94,7 +105,7 @@ def boxen_record(data=None, x=None, y=None, fill=True,
             "vals": vals, "opts": opts}
 
 
-def _boxen_horizontal(a): return a["opts"].get("orientation") == "h"
+def _boxen_horizontal(a): return a["opts"].get("orientation") == "y"
 def _boxen_values(a):
     return [v for row in a["vals"] for g in row for v in g]
 

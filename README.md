@@ -73,6 +73,6 @@ is the published gallery.
 
 ## Writing your own
 
-See plotlet's [docs/EXTENDING.md](https://github.com/gitbamboo42/plotlet/blob/main/docs/EXTENDING.md).
+See plotlet's [docs/EXTENDING.md](https://github.com/gitbamboo42/plotlet/blob/main/src/plotlet/docs/EXTENDING.md).
 The modules here are the reference implementations. `draw.*` is the public
 SVG-emission API — don't hand-roll `<line>` / `<rect>` f-strings.

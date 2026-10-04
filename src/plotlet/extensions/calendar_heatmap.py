@@ -16,7 +16,6 @@ from pathlib import Path
 import plotlet as pt
 from plotlet.draw import colormap, ContinuousNorm
 from plotlet.utils import pack_opts
-from plotlet._spec import _D
 from plotlet.draw import rect, text_path
 
 

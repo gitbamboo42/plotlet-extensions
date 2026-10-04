@@ -37,7 +37,7 @@ def lollipop_xdomain(a): return a["xs"]
 def lollipop_ydomain(a): return list(a["ys"]) + [0]
 
 
-# 3. draw(): emit SVG. ctx carries scales, dimensions, color, defaults.
+# 3. draw(): emit SVG. ctx carries scales, dimensions, color, spec.
 def lollipop_draw(a, ctx):
     out = []
     y0 = ctx.y_scale(0)

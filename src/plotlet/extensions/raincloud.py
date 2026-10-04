@@ -10,15 +10,17 @@ Input shape (long-form table):
     c = pt.chart(df, aes(x="cat", y="value", fill="group"))
     c.add_raincloud(palette={...})
 
+Swap the mapping — `aes(x="value", y="cat")` — for horizontal rainclouds.
+
 `aes(fill=...)` dodges sub-rainclouds side-by-side within
 each cat and emits one legend entry per group level. `palette=` accepts
 a dict (level → color) or a sequence; missing entries fall through to
 TAB10.
 
 Layout within each (cat, group) slot (divided into three sub-bands):
-  - Vertical (default):   violin LEFT,  box MIDDLE, strip RIGHT.
+  - Categories on x:      violin LEFT,  box MIDDLE, strip RIGHT.
                           Violin opens leftward (away from the box).
-  - Horizontal (`'h'`):   violin TOP,   box MIDDLE, strip BOTTOM.
+  - Categories on y:      violin TOP,   box MIDDLE, strip BOTTOM.
                           Violin opens upward (cloud above, rain below).
 
 Aesthetics:
@@ -28,7 +30,12 @@ Aesthetics:
   - `palette=`               — maps group levels → fills when column-driven.
 
 Other styling kwargs (all optional):
-  - `orientation='v'`        — `'h'` for horizontal rainclouds.
+  - `orientation=None`       — which axis holds the categories: `'x'` (the
+                               upright layout) or `'y'`. Unset guesses it —
+                               whichever of x/y is the discrete column
+                               becomes the category axis, so
+                               `aes(x="value", y="cat")` reads as
+                               horizontal on its own.
   - `width=0.8`              — total dodge-group width as a band fraction.
   - `gap=0.1`                — fraction of slot width left as a gap
                                between adjacent dodged sub-rainclouds.
@@ -53,7 +60,8 @@ from pathlib import Path
 import plotlet as pt
 from plotlet.utils import (to_list, quantile, resolve_aes, palette_color,
                             dodge_positions, categorical_groups,
-                            silverman_bw, kde_1d, pack_opts)
+                            silverman_bw, kde_1d, pack_opts,
+                            check_option, resolve_orientation)
 from plotlet.draw import TAB10, resolve_color
 from plotlet.draw import path, rect, segment, circle
 from plotlet._spec import _FRAME
@@ -95,8 +103,11 @@ def raincloud_record(data=None, x=None, y=None, fill=None,
         raise TypeError(
             "raincloud requires data=, x=, y= (fill= optional)."
         )
+    check_option("raincloud", "orientation", orientation, ("x", "y"))
     fill_literal, group_col = _resolve_fill(data, fill)
-    cats, groups, vals = categorical_groups(data, x, y, group_col)
+    orientation, cat_col, val_col = resolve_orientation(
+        "raincloud", data, x, y, orientation)
+    cats, groups, vals = categorical_groups(data, cat_col, val_col, group_col)
     return {"type": "raincloud", "cats": cats, "groups": groups,
             "vals": vals,
             "opts": pack_opts(
@@ -108,7 +119,7 @@ def raincloud_record(data=None, x=None, y=None, fill=None,
                 _fill_literal=fill_literal)}
 
 
-def _rc_horizontal(a): return a["opts"].get("orientation") == "h"
+def _rc_horizontal(a): return a["opts"].get("orientation") == "y"
 def _rc_values(a):
     return [v for row in a["vals"] for g in row for v in g]
 

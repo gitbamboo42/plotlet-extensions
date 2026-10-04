@@ -14,7 +14,7 @@ from pathlib import Path
 import plotlet as pt
 from plotlet.draw import rect
 from plotlet.utils import to_list, pack_opts
-from plotlet._spec import _D
+from plotlet._spec import SPEC
 
 
 def barh_record(data=None, x=None, y=None, width=None, alpha=None, label=None):
@@ -31,7 +31,7 @@ def barh_ydomain(a): return a["cats"]
 
 def barh_draw(a, ctx):
     col = ctx.color
-    alpha = a["opts"].get("alpha", _D["bar_alpha"])
+    alpha = a["opts"].get("alpha", SPEC["bar"]["alpha"])
     band = getattr(ctx.y_scale, "bandwidth", 1.0)
     bar_h = band * a["opts"].get("width", 0.8)
     x0 = ctx.x_scale(0)
